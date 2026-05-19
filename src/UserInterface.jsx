@@ -70,7 +70,7 @@ const ITEMS = [
   },
 ];
 
-export default function AboutMe() {
+export default function UserInterface() {
   const [active, setActive]   = useState(0);
   const [mounted, setMounted] = useState(false);
   const [revealed, setRevealed] = useState(false);

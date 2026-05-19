@@ -15,7 +15,7 @@ const EDUCATION_ROWS = [
   { index: "04", title: "Capstone Prep", status: "Pending" },
 ];
 
-export default function ResumePage({ src }) {
+export default function Animation({ src }) {
   const navigate = useNavigate();
   const [active, setActive] = useState(1);
   const [mounted, setMounted] = useState(false);

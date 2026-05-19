@@ -6,10 +6,10 @@ import main2 from './assets/main2.mp4'
 import main3 from './assets/main3.mp4'
 import P3Menu from './P3Menu'
 import VideoPage from './VideoPage'
-import ResumePage from './ResumePage'
 import PageTransition from './PageTransition'
-import Socials from './Socials'
-import AboutMe from './AboutMe'
+import UserInterface from './UserInterface'
+import Animation from './Animation'
+import Sfx from './Sfx'
 import './App.css'
 
 
@@ -31,14 +31,20 @@ function AnimatedRoutes() {
         <Route path="/" element={
           <PageTransition><MenuScreen /></PageTransition>
         } />
-        <Route path="/about" element={
-          <PageTransition variant="about"><AboutMe /></PageTransition>
+        <Route path="/userinterface" element={
+          <PageTransition variant="about"><UserInterface /></PageTransition>
         } />
-        <Route path="/resume" element={
-          <PageTransition><ResumePage src={main2} /></PageTransition>
+        <Route path="/animation" element={
+          <PageTransition><Animation src={main2} /></PageTransition>
         } />
-        <Route path="/socials" element={
-          <PageTransition variant="socials"><Socials /></PageTransition>
+        <Route path="/sfx" element={
+          <PageTransition variant="socials"><Sfx /></PageTransition>
+        } />
+        <Route path="/vfx" element={
+          <PageTransition><VideoPage src={main1} /></PageTransition>
+        } />
+        <Route path="/other" element={
+          <PageTransition><VideoPage src={main3} /></PageTransition>
         } />
       </Routes>
     </AnimatePresence>
