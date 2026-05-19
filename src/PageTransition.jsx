@@ -63,8 +63,8 @@ function AboutTransition() {
 
 function SocialsTransition() {
   const stripes = [
-    { color: "#00184c", left: "72vw", width: "24vw", delay: 0 },
-    { color: "#00dff7", left: "80vw", width: "14vw", delay: 0.06 },
+    { color: "#8b3d01", left: "72vw", width: "24vw", delay: 0 },
+    { color: "#F5842D", left: "80vw", width: "14vw", delay: 0.06 },
     { color: "#ffffff", left: "88vw", width: "8vw", delay: 0.12 },
   ];
 
