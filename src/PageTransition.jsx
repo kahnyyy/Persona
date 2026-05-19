@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 
-const defaultBlocks = ["#0d1a3a", "#8b3d01", "#F5842D"];
+const defaultBlocks = ["#000000", "#8b3d01", "#F5842D"];
 
 function DefaultTransition() {
   return defaultBlocks.map((color, i) => (
