@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 
 const ITEMS = [
-  { id: "about",   label: "USER INTERFACE",      page: "about",   fontSize: 80, offsetX: 0,  offsetY: 0,  skew: -6,  skewY: 10  },
-  { id: "resume",  label: "ANIMATION",        page: "resume",  fontSize: 66, offsetX: 20, offsetY: 8,  skew: -11, skewY: -10 },
-  { id: "github",  label: "VFX",   page: "github",  fontSize: 68, offsetX: 8, offsetY: 6,  skew: 0, skewY: -4  },
-  { id: "socials", label: "SFX",       page: "socials", fontSize: 74, offsetX: 16, offsetY: 8,  skew: -3,  skewY: 5   },
-  { id: "sideproj",label: "OTHER", page: "sideproj",fontSize: 56, offsetX: 10, offsetY: 6,  skew: -4,  skewY: 7   },
+  { id: "about",    label: "USER INTERFACE", page: "about",    fontSize: 80, offsetX: 0,  offsetY: 0,  skew: -6,  skewY: 10  },
+  { id: "resume",   label: "ANIMATION",      page: "resume",   fontSize: 66, offsetX: 20, offsetY: 8,  skew: -11, skewY: -10 },
+  { id: "github",   label: "VFX",            page: "github",   fontSize: 68, offsetX: 8,  offsetY: 6,  skew: 0,   skewY: -4  },
+  { id: "socials",  label: "SFX",            page: "socials",  fontSize: 74, offsetX: 16, offsetY: 8,  skew: -3,  skewY: 5   },
+  { id: "sideproj", label: "OTHER",          page: "sideproj", fontSize: 56, offsetX: 10, offsetY: 6,  skew: -4,  skewY: 7   },
 ];
 
 const CLIP_SHAPES = [
@@ -50,20 +50,20 @@ export default function P3Menu({ onNavigate }) {
           z-index: 10;
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           pointer-events: none;
         }
 
-        .p3-stripe  { position:absolute; right:0; top:0; bottom:0; width:5px; background:#c4001a; z-index:10; pointer-events:none; }
-        .p3-stripe2 { position:absolute; right:9px; top:0; bottom:0; width:2px; background:rgba(245,122,139,0.22); z-index:10; pointer-events:none; }
+        .p3-stripe  { position:absolute; right:0; top:0; bottom:0; width:5px; background:#444; z-index:10; pointer-events:none; }
+        .p3-stripe2 { position:absolute; right:9px; top:0; bottom:0; width:2px; background:rgba(200,200,200,0.15); z-index:10; pointer-events:none; }
 
         .p3-menu {
           position: relative;
           z-index: 20;
-          padding: 48px;
+          padding: 48px 48px 48px 52px;
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-start;
           pointer-events: all;
         }
 
@@ -72,7 +72,7 @@ export default function P3Menu({ onNavigate }) {
           cursor: pointer;
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           line-height: 1;
           text-decoration: none;
           opacity: 0;
@@ -89,7 +89,7 @@ export default function P3Menu({ onNavigate }) {
           top: 50%; left: 50%;
           transform: translate(-50%, -50%);
           width: 120%; height: 200%;
-          background: radial-gradient(ellipse at center, rgba(255,100,180,0.35) 0%, transparent 70%);
+          background: radial-gradient(ellipse at center, rgba(255,255,255,0.08) 0%, transparent 70%);
           filter: blur(18px);
           z-index: 0;
           pointer-events: none;
@@ -116,7 +116,7 @@ export default function P3Menu({ onNavigate }) {
           position: absolute;
           top: 50%;
           transform-origin: left center;
-          background: rgba(235, 80, 120, 0.85);
+          background: rgba(80, 80, 80, 0.85);
           z-index: 1;
           pointer-events: none;
           transform: translateY(-40%) translateX(-12px) scaleX(0);
@@ -152,14 +152,14 @@ export default function P3Menu({ onNavigate }) {
         }
 
         .p3-label-dark {
-          color: #3ce2ff;
+          color: #aaaaaa;
           transition: color 0.12s ease;
         }
-        .p3-row.active .p3-label-dark { color: #6b0010; }
-        .p3-row:hover:not(.active) .p3-label-dark { color: #00d9ff; }
+        .p3-row.active .p3-label-dark { color: #222222; }
+        .p3-row:hover:not(.active) .p3-label-dark { color: #ffffff; }
 
         .p3-label-bright {
-          color: #ff2a2a;
+          color: #1a1a1a;
           position: absolute;
           inset: 0;
           z-index: 1;
@@ -194,13 +194,13 @@ export default function P3Menu({ onNavigate }) {
           position: absolute;
           top: 18px;
           left: 22px;
-          z-index: 20;
+          z-index: 5;
           font-family: 'Anton', sans-serif;
           font-style: italic;
           font-size: 108px;
           line-height: 0.88;
           letter-spacing: 2px;
-          color: rgba(10, 10, 14, 0.64);
+          color: rgba(255,255,255,0.04);
           transform: rotate(18deg);
           transform-origin: left top;
           user-select: none;
@@ -209,15 +209,12 @@ export default function P3Menu({ onNavigate }) {
           flex-direction: column;
           align-items: flex-start;
         }
-        .p3-name-tag span:first-child {
-          color: rgba(0, 0, 0, 0.86);
-        }
       `}</style>
 
       <div className="p3-overlay">
         <div className="p3-name-tag">
           <span>kahny's</span>
-          <span>portfolio</span>
+          <span></span>
         </div>
         <div className="p3-stripe" />
         <div className="p3-stripe2" />
@@ -237,7 +234,7 @@ export default function P3Menu({ onNavigate }) {
                 href="#"
                 className={`p3-row ${isActive ? "active" : ""} ${mounted ? "mounted" : ""}`}
                 style={{
-                  marginRight: item.offsetX,
+                  marginLeft: item.offsetX,
                   marginTop: item.offsetY,
                   transitionDelay: mounted ? `${i * 80}ms` : "0ms",
                 }}
