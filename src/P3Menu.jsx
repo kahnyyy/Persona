@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 
 const ITEMS = [
   { id: "about",    label: "USER INTERFACE", page: "about",    fontSize: 80, offsetX: 0,  offsetY: 0,  skew: -6,  skewY: 10  },
-  { id: "resume",   label: "ANIMATION",      page: "resume",   fontSize: 66, offsetX: 20, offsetY: 8,  skew: -11, skewY: -10 },
-  { id: "github",   label: "VFX",            page: "github",   fontSize: 68, offsetX: 8,  offsetY: 6,  skew: 0,   skewY: -4  },
-  { id: "socials",  label: "SFX",            page: "socials",  fontSize: 74, offsetX: 16, offsetY: 8,  skew: -3,  skewY: 5   },
+  { id: "resume",   label: "ANIMATION",      page: "resume",   fontSize: 66, offsetX: 20, offsetY: 8,  skew: -11, skewY: 10 },
+  { id: "github",   label: "VFX",            page: "github",   fontSize: 68, offsetX: 8,  offsetY: 6,  skew: 0,   skewY: 10  },
+  { id: "socials",  label: "SFX",            page: "socials",  fontSize: 74, offsetX: 16, offsetY: 8,  skew: -3,  skewY: 10   },
   { id: "sideproj", label: "OTHER",          page: "sideproj", fontSize: 56, offsetX: 10, offsetY: 6,  skew: -4,  skewY: 7   },
 ];
 
@@ -213,7 +213,7 @@ export default function P3Menu({ onNavigate }) {
 
       <div className="p3-overlay">
         <div className="p3-name-tag">
-          <span>kahny's</span>
+          <span></span>
           <span></span>
         </div>
         <div className="p3-stripe" />
