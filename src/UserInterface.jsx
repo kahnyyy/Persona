@@ -86,14 +86,14 @@ export default function UIGallery() {
   useEffect(() => {
     const onKey = (e) => {
       if (lightbox) {
-        if (e.key === "Escape")      closeLightbox();
-        if (e.key === "ArrowLeft")   lbNavigate(-1);
-        if (e.key === "ArrowRight")  lbNavigate(1);
+        if (e.key === "Escape")                                      closeLightbox();
+        if (e.key === "ArrowLeft"  || e.key === "a" || e.key === "A") lbNavigate(-1);
+        if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") lbNavigate(1);
         return;
       }
-      if (e.key === "ArrowUp")    setActive(i => Math.max(0, i - 1));
-      if (e.key === "ArrowDown")  setActive(i => Math.min(UI_PIECES.length - 1, i + 1));
-      if (e.key === "Enter")      openLightbox(active);
+      if (e.key === "ArrowUp"   || e.key === "w" || e.key === "W") setActive(i => Math.max(0, i - 1));
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") setActive(i => Math.min(UI_PIECES.length - 1, i + 1));
+      if (e.key === "Enter"     || e.key === "d" || e.key === "D") openLightbox(active);
       if (e.key === "Escape" || e.key === "Backspace") navigate(-1);
     };
     window.addEventListener("keydown", onKey);
@@ -118,10 +118,7 @@ export default function UIGallery() {
               mounted        ? "bar--mounted"  : "",
             ].join(" ")}
             style={{ transitionDelay: `${i * 70}ms` }}
-            onClick={() => {
-              if (active === i) openLightbox(i);
-              else setActive(i);
-            }}
+            onClick={() => openLightbox(i)}
             onMouseEnter={() => setActive(i)}
             aria-label={`${item.title} — ${item.tag}`}
           >
@@ -148,7 +145,7 @@ export default function UIGallery() {
               </span>
               <span className="bar__desc">{item.desc}</span>
               <span className="bar__expand" aria-hidden="true">
-                {active === i ? "↵ VIEW" : ""}
+                {active === i ? "CLICK / ↵" : ""}
               </span>
             </span>
           </button>
@@ -157,8 +154,8 @@ export default function UIGallery() {
 
       {/* ── Footer hints ── */}
       <footer className={`footer${mounted ? " footer--mounted" : ""}`}>
-        <div className="footer__row"><kbd>↑↓</kbd><span>SELECT</span></div>
-        <div className="footer__row"><kbd>↵</kbd><span>VIEW</span></div>
+        <div className="footer__row"><kbd>↑↓ WS</kbd><span>SELECT</span></div>
+        <div className="footer__row"><kbd>↵ D</kbd><span>VIEW</span></div>
         <div className="footer__row"><kbd>ESC</kbd><span>BACK</span></div>
       </footer>
 
