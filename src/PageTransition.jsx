@@ -26,10 +26,10 @@ function DefaultTransition() {
   ));
 }
 
-function AboutTransition() {
+function AboutTransition() { /* USER INTERFACE */
   const panels = [
-    { color: "#8b3d01", top: "-12vh", left: "-18vw", width: "86vw", delay: 0 },
-    { color: "#F5842D", top: "24vh", left: "-10vw", width: "72vw", delay: 0.05 },
+    { color: "#01418b", top: "-12vh", left: "-18vw", width: "86vw", delay: 0 },
+    { color: "#2d8af5", top: "24vh", left: "-10vw", width: "72vw", delay: 0.05 },
     { color: "#ffffff", top: "58vh", left: "-14vw", width: "82vw", delay: 0.1 },
   ];
 
