@@ -33,13 +33,19 @@ export default function P3Menu({ onNavigate }) {
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "ArrowUp")   activate(Math.max(0, active - 1));
-      if (e.key === "ArrowDown") activate(Math.min(ITEMS.length - 1, active + 1));
-      if (e.key === "Enter")     onNavigate?.(ITEMS[active].page);
+      // Don't steal keys from inputs
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowUp"   || e.key === "w" || e.key === "W")
+        activate(Math.max(0, active - 1));
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S")
+        activate(Math.min(ITEMS.length - 1, active + 1));
+      if (e.key === "Enter" || e.key === "f" || e.key === "F" || e.key === "d" || e.key === "D")
+        onNavigate?.(ITEMS[active].page);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active]);
+  }, [active, onNavigate]);
 
   return (
     <>
@@ -54,8 +60,8 @@ export default function P3Menu({ onNavigate }) {
           pointer-events: none;
         }
 
-        .p3-stripe  { position:absolute; right:0; top:0; bottom:0; width:5px; background:#444; z-index:10; pointer-events:none; }
-        .p3-stripe2 { position:absolute; right:9px; top:0; bottom:0; width:2px; background:rgba(200,200,200,0.15); z-index:10; pointer-events:none; }
+        .p3-stripe  { position: absolute; right: 0; top: 0; bottom: 0; width: 5px; background: #444; z-index: 10; pointer-events: none; }
+        .p3-stripe2 { position: absolute; right: 9px; top: 0; bottom: 0; width: 2px; background: rgba(200,200,200,0.15); z-index: 10; pointer-events: none; }
 
         .p3-menu {
           position: relative;
@@ -116,14 +122,14 @@ export default function P3Menu({ onNavigate }) {
           position: absolute;
           top: 50%;
           transform-origin: left center;
-          background: rgba(80, 80, 80, 0.85);
+          background: rgba(80,80,80,0.85);
           z-index: 1;
           pointer-events: none;
           transform: translateY(-40%) translateX(-12px) scaleX(0);
           transition: transform 0.18s ease;
         }
         .p3-shadow-tri.pop {
-          animation: p3-shadow-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: p3-shadow-pop 0.28s cubic-bezier(0.34,1.56,0.64,1) forwards;
         }
 
         .p3-highlight {
@@ -168,32 +174,44 @@ export default function P3Menu({ onNavigate }) {
         }
         .p3-row.active .p3-label-bright { opacity: 1; }
 
+        /* ── Hint block ── */
         .p3-hint {
           position: absolute;
           bottom: 24px; right: 28px;
           z-index: 20;
           display: flex; flex-direction: column;
-          align-items: flex-end; gap: 5px;
+          align-items: flex-end; gap: 6px;
           font-family: 'Anton', sans-serif;
           opacity: 0;
           transition: opacity 0.5s ease 0.9s;
+          pointer-events: none;
         }
         .p3-hint.mounted { opacity: 1; }
         .p3-hint-row {
           display: flex; align-items: center; gap: 8px;
-          font-size: 13px; letter-spacing: 2px;
-          color: rgba(255,255,255,0.28);
+          font-size: 12px; letter-spacing: 2px;
+          color: rgba(255,255,255,0.22);
+        }
+        .p3-hint-keys {
+          display: flex; align-items: center; gap: 3px;
         }
         .p3-hint-key {
-          border: 1px solid rgba(255,255,255,0.2);
+          border: 1px solid rgba(255,255,255,0.18);
           border-radius: 3px;
           padding: 1px 6px; font-size: 11px;
+          line-height: 1.5;
+          font-family: 'Anton', sans-serif;
+          letter-spacing: 1px;
+        }
+        .p3-hint-sep {
+          font-size: 10px;
+          color: rgba(255,255,255,0.15);
+          padding: 0 1px;
         }
 
         .p3-name-tag {
           position: absolute;
-          top: 18px;
-          left: 22px;
+          top: 18px; left: 22px;
           z-index: 5;
           font-family: 'Anton', sans-serif;
           font-style: italic;
@@ -249,18 +267,13 @@ export default function P3Menu({ onNavigate }) {
                 >
                   <div
                     key={isActive ? `pop-${i}-${animKey}` : `idle-${i}`}
-                    className={`p3-shadow-tri${isActive ? ' pop' : ''}`}
-                    style={{
-                      width: estW,
-                      height: estH,
-                      clipPath: clipFn(estW, estH),
-                    }}
+                    className={`p3-shadow-tri${isActive ? " pop" : ""}`}
+                    style={{ width: estW, height: estH, clipPath: clipFn(estW, estH) }}
                   />
                   <div
                     className="p3-highlight"
                     style={{
-                      width: estW,
-                      height: estH,
+                      width: estW, height: estH,
                       clipPath: clipFn(estW, estH),
                       transform: `translateY(-50%) scaleX(${isActive ? 1 : 0})`,
                     }}
@@ -271,10 +284,7 @@ export default function P3Menu({ onNavigate }) {
                     </span>
                     <span
                       className="p3-label-base p3-label-bright"
-                      style={{
-                        fontSize: item.fontSize,
-                        clipPath: clipFn(estW, estH),
-                      }}
+                      style={{ fontSize: item.fontSize, clipPath: clipFn(estW, estH) }}
                     >
                       {item.label}
                     </span>
@@ -286,8 +296,22 @@ export default function P3Menu({ onNavigate }) {
         </nav>
 
         <div className={`p3-hint ${mounted ? "mounted" : ""}`}>
-          <div className="p3-hint-row"><span className="p3-hint-key">↑↓</span><span>NAVIGATE</span></div>
-          <div className="p3-hint-row"><span className="p3-hint-key">↵</span><span>CONFIRM</span></div>
+          <div className="p3-hint-row">
+            <div className="p3-hint-keys">
+              <span className="p3-hint-key">↑↓</span>
+              <span className="p3-hint-sep">/</span>
+              <span className="p3-hint-key">WS</span>
+            </div>
+            <span>NAVIGATE</span>
+          </div>
+          <div className="p3-hint-row">
+            <div className="p3-hint-keys">
+              <span className="p3-hint-key">↵</span>
+              <span className="p3-hint-sep">/</span>
+              <span className="p3-hint-key">F</span>
+            </div>
+            <span>CONFIRM</span>
+          </div>
         </div>
       </div>
     </>
