@@ -66,10 +66,10 @@ function SocialsTransition() {
 
 function ResumeTransition() {
   const cards = [
-    { top: "14vh", color: "#8b3d01", delay: 0 },
-    { top: "31vh", color: "#F5842D", delay: 0.05 },
+    { top: "14vh", color: "#8b0101", delay: 0 },
+    { top: "31vh", color: "#f52d2d", delay: 0.05 },
     { top: "48vh", color: "#ffffff", delay: 0.1 },
-    { top: "65vh", color: "#8b3d01", delay: 0.15 },
+    { top: "65vh", color: "#8b0101", delay: 0.15 },
   ];
   return cards.map((card, i) => (
     <motion.div
