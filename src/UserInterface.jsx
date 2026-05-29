@@ -89,7 +89,7 @@ export default function UIGallery() {
 
   const closeLightbox = useCallback(() => {
     setLbVisible(false);
-    setTimeout(() => setLightbox(false), 260);
+    setTimeout(() => setLightbox(false), 420);
   }, []);
 
   const lbNavigate = useCallback((dir) => {
@@ -271,7 +271,7 @@ export default function UIGallery() {
           onClick={(e) => { if (e.currentTarget===e.target) closeLightbox(); }}
           role="dialog" aria-modal="true" aria-label={`${piece.title} fullscreen`}
         >
-          <div className="lightbox__inner">
+          <div className={`lightbox__inner${lbVisible ? " lightbox__inner--open" : ""}`}>
 
             {/* Prev / Next */}
             <button className="lightbox__nav lightbox__nav--prev" onClick={() => lbNavigate(-1)} aria-label="Previous">◄</button>
@@ -281,6 +281,7 @@ export default function UIGallery() {
             <div
               className="lightbox__frame"
               ref={frameRef}
+              key={lbIndex}
               onWheel={onWheel}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
@@ -502,14 +503,33 @@ export default function UIGallery() {
           position: fixed; inset: 0; z-index: 100;
           background: rgba(0,0,0,0);
           display: flex; align-items: center; justify-content: center;
-          transition: background 0.26s ease; cursor: default;
+          transition: background 0.38s cubic-bezier(0.4,0,0.2,1);
+          cursor: default;
         }
         .lightbox--open { background: rgba(0,0,0,0.92); }
 
+        /* Inner panel — slides up on open, slides down on close */
         .lightbox__inner {
           position: relative;
           width: min(90vw, 1200px);
           display: flex; flex-direction: column; gap: 0;
+          opacity: 0;
+          transform: translateY(28px) scale(0.97);
+          transition:
+            opacity 0.35s cubic-bezier(0.22,1,0.36,1),
+            transform 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .lightbox__inner--open {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+        /* Exit: faster, slides down slightly */
+        .lightbox:not(.lightbox--open) .lightbox__inner {
+          opacity: 0;
+          transform: translateY(14px) scale(0.98);
+          transition:
+            opacity 0.28s cubic-bezier(0.4,0,1,1),
+            transform 0.28s cubic-bezier(0.4,0,1,1);
         }
 
         .lightbox__nav {
@@ -525,12 +545,17 @@ export default function UIGallery() {
         .lightbox__nav--next { left:  calc(100% + 14px); }
 
         /* Image frame */
+        @keyframes lb-frame-in {
+          0%   { opacity: 0; transform: scale(0.975); }
+          100% { opacity: 1; transform: scale(1); }
+        }
         .lightbox__frame {
           position: relative; width: 100%; aspect-ratio: 16/9;
           background: #060608;
           border: 1px solid rgba(255,255,255,0.08);
           border-bottom: none;
           overflow: hidden;
+          animation: lb-frame-in 0.3s cubic-bezier(0.22,1,0.36,1) both;
         }
         .lightbox__img {
           width: 100%; height: 100%;
@@ -559,6 +584,10 @@ export default function UIGallery() {
           pointer-events: none; z-index: 3;
         }
 
+        @keyframes lb-toolbar-in {
+          0%   { opacity: 0; transform: translateY(6px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
         /* ── Toolbar ── */
         .lb-toolbar {
           display: flex; align-items: center;
@@ -567,6 +596,7 @@ export default function UIGallery() {
           border-top: 1px solid rgba(255,255,255,0.06);
           padding: 0 12px;
           height: 42px; gap: 12px;
+          animation: lb-toolbar-in 0.32s cubic-bezier(0.22,1,0.36,1) 0.1s both;
         }
 
         .lb-toolbar__info {
@@ -661,6 +691,7 @@ export default function UIGallery() {
           font-size: 13px; font-weight: 300; letter-spacing: 0.4px;
           color: rgba(255,255,255,0.35); line-height: 1.5;
           padding: 8px 12px 0;
+          animation: lb-toolbar-in 0.32s cubic-bezier(0.22,1,0.36,1) 0.16s both;
         }
 
         /* ── Mobile ── */
