@@ -264,6 +264,15 @@ export default function UIGallery() {
         <div className="footer__row"><kbd>ESC</kbd><span>BACK</span></div>
       </footer>
 
+      {/* ── Back button ── */}
+      <button
+        className={`back-btn${mounted ? " back-btn--mounted" : ""}`}
+        onClick={() => navigate(-1)}
+        aria-label="Go back"
+      >
+        ◄ BACK
+      </button>
+
       {/* ── Lightbox ── */}
       {lightbox && (
         <div
@@ -496,6 +505,44 @@ export default function UIGallery() {
           font-family: 'Bebas Neue', sans-serif;
           border: 1px solid rgba(255,255,255,0.12); border-radius: 3px;
           padding: 1px 6px; font-size: 10px; background: none; color: inherit;
+        }
+
+        /* ── Back button ── */
+        .back-btn {
+          position: fixed;
+          bottom: 20px;
+          left: 20px;
+          z-index: 50;
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 12px;
+          letter-spacing: 2.5px;
+          color: rgba(196,0,26,0.7);
+          background: rgba(196,0,26,0.06);
+          border: 1px solid rgba(196,0,26,0.25);
+          border-radius: 3px;
+          padding: 5px 12px;
+          cursor: pointer;
+          pointer-events: all;
+          opacity: 0;
+          transform: translateY(4px);
+          transition:
+            opacity 0.4s ease 0.9s,
+            transform 0.4s ease 0.9s,
+            background 0.15s ease,
+            color 0.15s ease,
+            border-color 0.15s ease;
+        }
+        .back-btn--mounted {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .back-btn:hover {
+          background: rgba(196,0,26,0.18);
+          color: #ff2233;
+          border-color: rgba(196,0,26,0.55);
+        }
+        .back-btn:active {
+          background: rgba(196,0,26,0.28);
         }
 
         /* ── Lightbox ── */
