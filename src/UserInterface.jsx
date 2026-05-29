@@ -2,12 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import bgVideo from "./assets/UryuUIChangedEND.mp4";
 
-// ─── ADD YOUR IMAGES HERE ───────────────────────────────────────────────────
-// Import each image and add an entry to UI_PIECES below.
-// import ui1 from "./assets/ui1.png";
-// { src: ui1, title: "My UI", tag: "Game UI", desc: "Description here." }
-// ────────────────────────────────────────────────────────────────────────────
-
 import ui1 from "./assets/KaguraUI.png";
 import ui2 from "./assets/KaguraUI.png";
 import ui3 from "./assets/KaguraUI.png";
@@ -111,10 +105,10 @@ export default function UIGallery() {
 
   return (
     <div id="gallery-root">
-      <video src={bgVideo} autoPlay loop muted playsInline className="bg-video" />
+      <video src={bgVideo} autoPlay loop muted playsInline className="bg-video" style={{pointerEvents: "none", zIndex: 0}} />
 
       {/* ── Bar stack ── */}
-      <nav className="bar-stack" aria-label="UI work gallery">
+      <nav className="bar-stack" aria-label="UI work gallery" style={{pointerEvents: "all", zIndex: 50}}>
         {UI_PIECES.map((item, i) => (
           // Wrapper div handles all pointer events — no clip-path here so hit area is full rectangle
           <div
@@ -124,7 +118,7 @@ export default function UIGallery() {
               active === i  ? "bar-hit--active"  : "",
               mounted       ? "bar-hit--mounted"  : "",
             ].join(" ")}
-            style={{ transitionDelay: `${i * 70}ms` }}
+            style={{ transitionDelay: `${i * 70}ms`, pointerEvents: 'all', position: 'relative', zIndex: 50 }}
             onClick={() => openLightbox(i)}
             onMouseEnter={() => setActive(i)}
             role="button"
@@ -218,6 +212,7 @@ export default function UIGallery() {
           inset: 0;
           overflow: hidden;
           background: #000;
+          isolation: isolate;
         }
 
         .bg-video {
@@ -227,7 +222,7 @@ export default function UIGallery() {
           height: 100%;
           object-fit: cover;
           z-index: 0;
-          pointer-events: none;
+          pointer-events: none !important;
         }
 
         /* ── Bar stack ── */
@@ -236,7 +231,7 @@ export default function UIGallery() {
           left: 0;
           top: 50%;
           transform: translateY(-50%);
-          z-index: 10;
+          z-index: 50;
           display: flex;
           flex-direction: column;
           gap: 8px;
@@ -257,6 +252,7 @@ export default function UIGallery() {
           transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
                       width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
           user-select: none;
+          pointer-events: all;
         }
         .bar-hit--mounted  { transform: translateX(0); }
         .bar-hit:nth-child(1) { transition-delay: 0ms; }
