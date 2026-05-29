@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import bgVideo from "./assets/UryuUIChangedEND.mp4";
 
 // ─── ADD YOUR IMAGES HERE ───────────────────────────────────────────────────
-// Import each image at the top, then add an entry to UI_PIECES below.
-// Example:
-//   import img1 from "./assets/ui_dashboard.png";
-//   { src: img1, title: "Dashboard", tag: "Web App", desc: "..." }
+// Import each image and add an entry to UI_PIECES below.
+// import ui1 from "./assets/ui1.png";
+// { src: ui1, title: "My UI", tag: "Game UI", desc: "Description here." }
 // ────────────────────────────────────────────────────────────────────────────
 
-// PLACEHOLDER — replace these with your actual imports:
 import ui1 from "./assets/KaguraUI.png";
 import ui2 from "./assets/KaguraUI.png";
 import ui3 from "./assets/KaguraUI.png";
@@ -60,7 +58,7 @@ export default function UIGallery() {
   const [active, setActive]         = useState(0);
   const [lightbox, setLightbox]     = useState(false);
   const [lbIndex, setLbIndex]       = useState(0);
-  const [lbEntering, setLbEntering] = useState(false);
+  const [lbVisible, setLbVisible]   = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,12 +69,12 @@ export default function UIGallery() {
   const openLightbox = useCallback((i) => {
     setLbIndex(i);
     setLightbox(true);
-    setTimeout(() => setLbEntering(true), 10);
+    requestAnimationFrame(() => requestAnimationFrame(() => setLbVisible(true)));
   }, []);
 
   const closeLightbox = useCallback(() => {
-    setLbEntering(false);
-    setTimeout(() => setLightbox(false), 280);
+    setLbVisible(false);
+    setTimeout(() => setLightbox(false), 260);
   }, []);
 
   const lbNavigate = useCallback((dir) => {
@@ -85,16 +83,25 @@ export default function UIGallery() {
 
   useEffect(() => {
     const onKey = (e) => {
+      // Don't fire if user is typing somewhere
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
       if (lightbox) {
-        if (e.key === "Escape")                                      closeLightbox();
+        if (e.key === "Escape")                                        closeLightbox();
         if (e.key === "ArrowLeft"  || e.key === "a" || e.key === "A") lbNavigate(-1);
         if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") lbNavigate(1);
         return;
       }
-      if (e.key === "ArrowUp"   || e.key === "w" || e.key === "W") setActive(i => Math.max(0, i - 1));
-      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") setActive(i => Math.min(UI_PIECES.length - 1, i + 1));
-      if (e.key === "Enter"     || e.key === "d" || e.key === "D") openLightbox(active);
-      if (e.key === "Escape" || e.key === "Backspace") navigate(-1);
+      // Gallery navigation — WASD + arrows
+      if (e.key === "ArrowUp"   || e.key === "w" || e.key === "W")
+        setActive(i => Math.max(0, i - 1));
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S")
+        setActive(i => Math.min(UI_PIECES.length - 1, i + 1));
+      // Open: Enter or F (WASD-friendly confirm, avoids d/a conflict)
+      if (e.key === "Enter" || e.key === "f" || e.key === "F")
+        openLightbox(active);
+      if (e.key === "Escape" || e.key === "Backspace")
+        navigate(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -104,76 +111,77 @@ export default function UIGallery() {
 
   return (
     <div id="gallery-root">
-      {/* ── Background video ── */}
       <video src={bgVideo} autoPlay loop muted playsInline className="bg-video" />
 
-      {/* ── Left bar stack ── */}
+      {/* ── Bar stack ── */}
       <nav className="bar-stack" aria-label="UI work gallery">
         {UI_PIECES.map((item, i) => (
-          <button
+          // Wrapper div handles all pointer events — no clip-path here so hit area is full rectangle
+          <div
             key={i}
             className={[
-              "bar",
-              active === i   ? "bar--active"  : "",
-              mounted        ? "bar--mounted"  : "",
+              "bar-hit",
+              active === i  ? "bar-hit--active"  : "",
+              mounted       ? "bar-hit--mounted"  : "",
             ].join(" ")}
             style={{ transitionDelay: `${i * 70}ms` }}
             onClick={() => openLightbox(i)}
             onMouseEnter={() => setActive(i)}
+            role="button"
+            tabIndex={0}
             aria-label={`${item.title} — ${item.tag}`}
+            onKeyDown={(e) => { if (e.key === "Enter") openLightbox(i); }}
           >
-            {/* Red underlay peek */}
-            <span className="bar__red" aria-hidden="true" />
+            {/* Visual bar — clip-path is only visual, pointer events stay on wrapper */}
+            <div className="bar-visual">
+              <span className="bar__red"  aria-hidden="true" />
+              <span className="bar__fill" aria-hidden="true" />
 
-            {/* Thumbnail */}
-            <span className="bar__thumb" aria-hidden="true">
-              {item.src
-                ? <img src={item.src} alt="" className="bar__thumb-img" />
-                : <span className="bar__thumb-placeholder" />
-              }
-            </span>
-
-            {/* White fill sweep */}
-            <span className="bar__fill" aria-hidden="true" />
-
-            {/* Content */}
-            <span className="bar__content">
-              <span className="bar__index">{String(i + 1).padStart(2, "0")}</span>
-              <span className="bar__text">
-                <span className="bar__title">{item.title}</span>
-                <span className="bar__tag">{item.tag}</span>
+              <span className="bar__thumb" aria-hidden="true">
+                {item.src
+                  ? <img src={item.src} alt="" className="bar__thumb-img" />
+                  : <span className="bar__thumb-placeholder" />
+                }
               </span>
-              <span className="bar__desc">{item.desc}</span>
-              <span className="bar__expand" aria-hidden="true">
-                {active === i ? "CLICK / ↵" : ""}
+
+              <span className="bar__content">
+                <span className="bar__index">{String(i + 1).padStart(2, "0")}</span>
+                <span className="bar__text">
+                  <span className="bar__title">{item.title}</span>
+                  <span className="bar__tag">{item.tag}</span>
+                </span>
+                <span className="bar__hint" aria-hidden="true">
+                  {active === i ? "CLICK / ↵" : ""}
+                </span>
               </span>
-            </span>
-          </button>
+            </div>
+
+            {/* Description sits outside the clipped bar so it's always readable */}
+            <span className="bar__desc">{item.desc}</span>
+          </div>
         ))}
       </nav>
 
       {/* ── Footer hints ── */}
       <footer className={`footer${mounted ? " footer--mounted" : ""}`}>
-        <div className="footer__row"><kbd>↑↓ WS</kbd><span>SELECT</span></div>
-        <div className="footer__row"><kbd>↵ D</kbd><span>VIEW</span></div>
+        <div className="footer__row"><kbd>↑↓ / WS</kbd><span>SELECT</span></div>
+        <div className="footer__row"><kbd>↵ / F</kbd><span>VIEW</span></div>
         <div className="footer__row"><kbd>ESC</kbd><span>BACK</span></div>
       </footer>
 
       {/* ── Lightbox ── */}
       {lightbox && (
         <div
-          className={`lightbox${lbEntering ? " lightbox--open" : ""}`}
-          onClick={(e) => { if (e.target.classList.contains("lightbox")) closeLightbox(); }}
+          className={`lightbox${lbVisible ? " lightbox--open" : ""}`}
+          onClick={(e) => { if (e.currentTarget === e.target) closeLightbox(); }}
           role="dialog"
           aria-modal="true"
           aria-label={`${piece.title} fullscreen`}
         >
           <div className="lightbox__inner">
-            {/* Nav arrows */}
             <button className="lightbox__nav lightbox__nav--prev" onClick={() => lbNavigate(-1)} aria-label="Previous">◄</button>
             <button className="lightbox__nav lightbox__nav--next" onClick={() => lbNavigate(1)}  aria-label="Next">►</button>
 
-            {/* Image */}
             <div className="lightbox__frame">
               {piece.src
                 ? <img src={piece.src} alt={piece.title} className="lightbox__img" />
@@ -184,11 +192,9 @@ export default function UIGallery() {
                   </div>
                 )
               }
-              {/* Scanline overlay for atmosphere */}
               <span className="lightbox__scanlines" aria-hidden="true" />
             </div>
 
-            {/* Info bar */}
             <div className="lightbox__info">
               <div className="lightbox__info-left">
                 <span className="lightbox__counter">{String(lbIndex + 1).padStart(2,"0")} / {String(UI_PIECES.length).padStart(2,"0")}</span>
@@ -203,7 +209,7 @@ export default function UIGallery() {
       )}
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=Barlow+Condensed:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -214,7 +220,6 @@ export default function UIGallery() {
           background: #000;
         }
 
-        /* ── Video ── */
         .bg-video {
           position: absolute;
           inset: 0;
@@ -234,54 +239,58 @@ export default function UIGallery() {
           z-index: 10;
           display: flex;
           flex-direction: column;
-          gap: 5px;
+          gap: 8px;
           padding: 0;
           list-style: none;
         }
 
-        /* ── Single bar ── */
-        .bar {
+        /* ── Hit wrapper — full rectangle, no clip-path ── */
+        .bar-hit {
           position: relative;
-          display: flex;
-          align-items: stretch;
           width: 340px;
+          /* extra padding-bottom to give room for the desc line */
+          padding-bottom: 20px;
+          cursor: pointer;
+          outline: none;
+          /* slide in animation */
+          transform: translateX(-120%);
+          transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                      width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+          user-select: none;
+        }
+        .bar-hit--mounted  { transform: translateX(0); }
+        .bar-hit:nth-child(1) { transition-delay: 0ms; }
+        .bar-hit:nth-child(2) { transition-delay: 70ms; }
+        .bar-hit:nth-child(3) { transition-delay: 140ms; }
+        .bar-hit:nth-child(4) { transition-delay: 210ms; }
+        .bar-hit:nth-child(5) { transition-delay: 280ms; }
+        .bar-hit--active   { width: 390px; }
+
+        /* ── Visual bar — clip-path lives here, not on the hit target ── */
+        .bar-visual {
+          position: relative;
           height: 58px;
           background: rgba(8, 8, 10, 0.88);
-          border: none;
-          cursor: pointer;
-          overflow: visible;
           clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
-          transition:
-            width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-            height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-          transform: translateX(-120%);
-          text-align: left;
-          outline: none;
+          overflow: visible;
+          transition: height 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+          pointer-events: none; /* hit wrapper handles clicks */
         }
+        .bar-hit--active .bar-visual { height: 80px; }
 
-        .bar--mounted {
-          transform: translateX(0);
-        }
-
-        .bar--active {
-          height: 80px;
-          width: 380px;
-        }
-
-        /* red underlay peek (bottom-right edge) */
+        /* red underlay */
         .bar__red {
           position: absolute;
           inset: 0;
           background: #c4001a;
-          clip-path: polygon(70% 0, 100% 0, 100% 100%, calc(70% - 12px) 100%);
+          clip-path: polygon(68% 0, 100% 0, 100% 100%, calc(68% - 12px) 100%);
           transform: translateY(-5px);
           opacity: 0;
           transition: opacity 0.2s ease;
           z-index: 0;
           pointer-events: none;
         }
-        .bar--active .bar__red { opacity: 1; }
+        .bar-hit--active .bar__red { opacity: 1; }
 
         /* white fill sweep */
         .bar__fill {
@@ -293,16 +302,15 @@ export default function UIGallery() {
           z-index: 0;
           pointer-events: none;
         }
-        .bar--active .bar__fill {
-          clip-path: polygon(32% 0, 100% 0, calc(100% - 12px) 100%, calc(32% + 120px) 100%);
+        .bar-hit--active .bar__fill {
+          clip-path: polygon(30% 0, 100% 0, calc(100% - 12px) 100%, calc(30% + 120px) 100%);
         }
 
         /* thumbnail */
         .bar__thumb {
           position: absolute;
-          top: 0;
-          right: 0;
-          width: 40%;
+          top: 0; right: 0;
+          width: 42%;
           height: 100%;
           z-index: 1;
           overflow: hidden;
@@ -311,18 +319,14 @@ export default function UIGallery() {
           transition: opacity 0.3s ease;
           pointer-events: none;
         }
-        .bar--active .bar__thumb { opacity: 0.65; }
-
+        .bar-hit--active .bar__thumb { opacity: 0.6; }
         .bar__thumb-img {
-          width: 100%;
-          height: 100%;
+          width: 100%; height: 100%;
           object-fit: cover;
           object-position: center top;
         }
         .bar__thumb-placeholder {
-          display: block;
-          width: 100%;
-          height: 100%;
+          display: block; width: 100%; height: 100%;
           background: rgba(255,255,255,0.04);
         }
 
@@ -330,12 +334,11 @@ export default function UIGallery() {
         .bar__content {
           position: relative;
           z-index: 2;
+          height: 100%;
           display: flex;
           align-items: center;
           gap: 10px;
           padding: 0 12px 0 16px;
-          width: 100%;
-          height: 100%;
           pointer-events: none;
         }
 
@@ -348,7 +351,7 @@ export default function UIGallery() {
           letter-spacing: 1px;
           transition: color 0.2s ease;
         }
-        .bar--active .bar__index { color: rgba(0,0,0,0.35); }
+        .bar-hit--active .bar__index { color: rgba(0,0,0,0.3); }
 
         .bar__text {
           display: flex;
@@ -357,7 +360,6 @@ export default function UIGallery() {
           flex: 1;
           min-width: 0;
         }
-
         .bar__title {
           font-family: 'Bebas Neue', sans-serif;
           font-size: 22px;
@@ -369,7 +371,7 @@ export default function UIGallery() {
           text-overflow: ellipsis;
           transition: color 0.2s ease;
         }
-        .bar--active .bar__title { color: #0a0a0a; }
+        .bar-hit--active .bar__title { color: #0a0a0a; }
 
         .bar__tag {
           font-family: 'Barlow Condensed', sans-serif;
@@ -380,40 +382,42 @@ export default function UIGallery() {
           color: rgba(255,255,255,0.3);
           transition: color 0.2s ease;
         }
-        .bar--active .bar__tag { color: rgba(0,0,0,0.4); }
+        .bar-hit--active .bar__tag { color: rgba(0,0,0,0.4); }
 
-        .bar__desc {
-          position: absolute;
-          bottom: -28px;
-          left: 16px;
-          right: 20px;
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 11px;
-          font-weight: 300;
-          letter-spacing: 0.5px;
-          color: rgba(255,255,255,0.45);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          opacity: 0;
-          transform: translateY(-4px);
-          transition: opacity 0.2s ease 0.1s, transform 0.2s ease 0.1s;
-          pointer-events: none;
-        }
-        .bar--active .bar__desc {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .bar__expand {
+        .bar__hint {
           font-family: 'Bebas Neue', sans-serif;
           font-size: 11px;
           letter-spacing: 2px;
           color: #c4001a;
           flex-shrink: 0;
           padding-right: 6px;
-          min-width: 44px;
+          min-width: 60px;
           text-align: right;
+        }
+
+        /* desc sits below the clipped bar — no clip-path restriction */
+        .bar__desc {
+          display: block;
+          position: absolute;
+          bottom: 2px;
+          left: 16px;
+          right: 16px;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 11px;
+          font-weight: 300;
+          letter-spacing: 0.5px;
+          color: rgba(255,255,255,0.4);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          opacity: 0;
+          transform: translateY(-2px);
+          transition: opacity 0.2s ease 0.08s, transform 0.2s ease 0.08s;
+          pointer-events: none;
+        }
+        .bar-hit--active .bar__desc {
+          opacity: 1;
+          transform: translateY(0);
         }
 
         /* ── Footer ── */
@@ -429,6 +433,7 @@ export default function UIGallery() {
           z-index: 10;
           opacity: 0;
           transition: opacity 0.4s ease 0.8s;
+          pointer-events: none;
         }
         .footer--mounted { opacity: 1; }
         .footer__row {
@@ -454,22 +459,22 @@ export default function UIGallery() {
           position: fixed;
           inset: 0;
           z-index: 100;
-          background: rgba(0, 0, 0, 0);
+          background: rgba(0,0,0,0);
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: background 0.28s ease;
+          transition: background 0.26s ease;
+          cursor: default;
         }
-        .lightbox--open {
-          background: rgba(0, 0, 0, 0.88);
-        }
+        .lightbox--open { background: rgba(0,0,0,0.9); }
 
         .lightbox__inner {
           position: relative;
-          width: min(92vw, 1100px);
+          width: min(90vw, 1100px);
           display: flex;
           flex-direction: column;
           gap: 14px;
+          cursor: default;
         }
 
         .lightbox__nav {
@@ -488,7 +493,7 @@ export default function UIGallery() {
           transition: background 0.15s ease, color 0.15s ease;
           z-index: 10;
         }
-        .lightbox__nav:hover { background: rgba(196,0,26,0.3); color: #fff; }
+        .lightbox__nav:hover { background: rgba(196,0,26,0.35); color: #fff; }
         .lightbox__nav--prev { right: calc(100% + 14px); }
         .lightbox__nav--next { left:  calc(100% + 14px); }
 
@@ -500,17 +505,13 @@ export default function UIGallery() {
           border: 1px solid rgba(255,255,255,0.1);
           overflow: hidden;
         }
-
         .lightbox__img {
-          width: 100%;
-          height: 100%;
+          width: 100%; height: 100%;
           object-fit: contain;
           display: block;
         }
-
         .lightbox__placeholder {
-          width: 100%;
-          height: 100%;
+          width: 100%; height: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -529,16 +530,12 @@ export default function UIGallery() {
           letter-spacing: 6px;
           color: rgba(255,255,255,0.25);
         }
-
         .lightbox__scanlines {
           position: absolute;
           inset: 0;
           background: repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 2px,
-            rgba(0,0,0,0.08) 2px,
-            rgba(0,0,0,0.08) 4px
+            0deg, transparent, transparent 2px,
+            rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
           );
           pointer-events: none;
           z-index: 2;
@@ -549,14 +546,12 @@ export default function UIGallery() {
           align-items: flex-start;
           gap: 20px;
         }
-
         .lightbox__info-left {
           display: flex;
           align-items: center;
           gap: 14px;
           flex-shrink: 0;
         }
-
         .lightbox__counter {
           font-family: 'Bebas Neue', sans-serif;
           font-size: 13px;
@@ -580,7 +575,6 @@ export default function UIGallery() {
           padding: 2px 7px;
           border-radius: 2px;
         }
-
         .lightbox__desc {
           flex: 1;
           font-family: 'Barlow Condensed', sans-serif;
@@ -590,13 +584,9 @@ export default function UIGallery() {
           color: rgba(255,255,255,0.45);
           line-height: 1.5;
         }
-
         .lightbox__close {
           flex-shrink: 0;
-          font-size: 14px;
-          font-family: 'Barlow Condensed', sans-serif;
-          width: 30px;
-          height: 30px;
+          width: 30px; height: 30px;
           border-radius: 3px;
           background: rgba(255,255,255,0.06);
           border: 1px solid rgba(255,255,255,0.12);
@@ -606,17 +596,21 @@ export default function UIGallery() {
           display: flex;
           align-items: center;
           justify-content: center;
+          font-size: 14px;
+          font-family: 'Barlow Condensed', sans-serif;
         }
         .lightbox__close:hover { background: rgba(196,0,26,0.35); color: #fff; }
 
         /* ── Mobile ── */
         @media (max-width: 768px) {
-          .bar { width: 280px; }
-          .bar--active { width: 300px; height: 76px; }
+          .bar-hit        { width: 280px; }
+          .bar-hit--active { width: 308px; }
+          .bar-hit--active .bar-visual { height: 72px; }
           .footer { display: none; }
-          .lightbox__nav--prev { right: auto; left: 0; top: auto; bottom: -48px; transform: none; }
-          .lightbox__nav--next { left: auto; right: 0; top: auto; bottom: -48px; transform: none; }
+          .lightbox__nav--prev { right: auto; left: 4px;  top: auto; bottom: -50px; transform: none; }
+          .lightbox__nav--next { left:  auto; right: 4px; top: auto; bottom: -50px; transform: none; }
           .lightbox__info { flex-wrap: wrap; }
+          .lightbox__inner { width: 96vw; }
         }
       `}</style>
     </div>
