@@ -1,17 +1,17 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-// ─── ADD YOUR VIDEOS HERE ────────────────────────────────────────────────────
-// import vid1 from "./assets/anim1.mp4";
+
 import vid1 from "./assets/animation/WalkCycle.mp4";
+import soon from "./assets/animation/soon.mp4";
 
 const ANIM_PIECES = [
-  { src: vid1, title: "Slash FX",       tag: "VFX",       desc: "High-speed sword slash with motion blur and impact frames." },
-  { src: vid1, title: "Fire Loop",      tag: "VFX",       desc: "Looping flame animation hand-drawn frame by frame." },
-  { src: vid1, title: "Character Run",  tag: "CHARACTER", desc: "Full character run cycle with secondary motion." },
-  { src: vid1, title: "Idle Breath",    tag: "CHARACTER", desc: "Subtle idle breathing animation with cloth physics." },
-  { src: vid1, title: "Impact Hit",     tag: "VFX",       desc: "Smear frames and hit flash on contact point." },
-  { src: vid1, title: "Crowd Scene",    tag: "SCENE",     desc: "Multi-layer parallax crowd animation with depth." },
+  { src: soon, title: "Punch Cycle",       tag: "ATTACK",       desc: "Soon" },
+  { src: soon, title: "Sword Cycle",      tag: "ATTACK",       desc: "Soon" },
+  { src: vid1, title: "Walk Cycle",  tag: "CHARACTER", desc: "Full character walk cycle with secondary motion." },
+  { src: soon, title: "Idle",    tag: "CHARACTER", desc: "Soon" },
+  { src: soon, title: "Other",     tag: "ATTACK",       desc: "Soon" },
+  { src: soon, title: "Other",    tag: "ATTACK",     desc: "Soon" },
   // ── Add more entries here ──
 ];
 
