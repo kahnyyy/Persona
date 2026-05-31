@@ -43,7 +43,7 @@ function AnimatedRoutes() {
           path="/sfx"
           element={
             <PageTransition>
-              <Vfx src={sfxvideo} />
+              <Sfx src={sfxvideo} />
             </PageTransition>
           }
         />
