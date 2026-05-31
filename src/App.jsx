@@ -10,6 +10,7 @@ import PageTransition from './PageTransition'
 import UserInterface from './UserInterface'
 import Animation from './Animation'
 import Sfx from './Sfx'
+import Vfx from './Vfx'
 import './App.css'
 
 
@@ -40,9 +41,14 @@ function AnimatedRoutes() {
         <Route path="/sfx" element={
           <PageTransition variant="socials"><Sfx /></PageTransition>
         } />
-        <Route path="/vfx" element={
-          <PageTransition><VideoPage src={main1} /></PageTransition>
-        } />
+        <Route
+          path="/vfx"
+          element={
+            <PageTransition>
+              <Vfx src={main1} />
+            </PageTransition>
+          }
+        />
         <Route path="/other" element={
           <PageTransition><VideoPage src={main3} /></PageTransition>
         } />
