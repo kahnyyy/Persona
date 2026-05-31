@@ -2,14 +2,19 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import soon from "./assets/animation/soon.mp4";
+import arrow from "./assets/CTAGS/Arrow.mp4";
+import heart from "./assets/CTAGS/Heart.mp4";
+import meanacing from "./assets/CTAGS/Meanacing.mp4";
+import soul from "./assets/CTAGS/SoulEater.mp4";
+
 
 const VFX_PIECES = [
-  { src: soon, title: "Hit VFX",       tag: "ATTACK",    desc: "Soon" },
-  { src: soon, title: "Explosion VFX", tag: "EXPLOSION", desc: "Soon" },
-  { src: soon, title: "Magic VFX",     tag: "MAGIC",     desc: "Soon" },
-  { src: soon, title: "Summon VFX",    tag: "CHARACTER", desc: "Soon" },
-  { src: soon, title: "Other",         tag: "ATTACK",    desc: "Soon" },
-  { src: soon, title: "Other",         tag: "ATTACK",    desc: "Soon" },
+  { src: soul, title: "Soul Eater",       tag: "8 FRAME | RESONANCE",    desc: "8 Frame sprite animation" },
+  { src: heart, title: "HXH Heart", tag: "10 FRAME | HXH", desc: "10 Frame sprite animation" },
+  { src: arrow, title: "JJBA Arrow",     tag: "10 FRAME, 4 FRAME, 8 FRAME | STAND INITIATION",     desc: "3 diffrent sprite animations layered" },
+  { src: meanacing, title: "JJBA Meanacing",    tag: "10 FRAME, 4 FRAME, 8 FRAME | STAND INITIATION", desc: "3 diffrent sprite animations layered" },
+  { src: soon, title: "Other",         tag: "Soon",    desc: "Soon" },
+  { src: soon, title: "Other",         tag: "Soon",    desc: "Soon" },
   // ── Add more entries here ──
 ];
 
@@ -177,7 +182,7 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-bar-index {
           font-family: 'Bebas Neue', sans-serif; font-size: 26px;
-          color: rgba(180,200,40,0.3); line-height: 1; flex-shrink: 0;
+          color: rgba(168, 40, 200, 0.3); line-height: 1; flex-shrink: 0;
           letter-spacing: 1px; transition: color 0.2s ease;
         }
         .vfx-bar-hit--active .vfx-bar-index { color: rgba(0,0,0,0.3); }
@@ -376,7 +381,7 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-lb-counter {
           font-family: 'Bebas Neue', sans-serif; font-size: 12px;
-          letter-spacing: 2px; color: rgba(180,200,40,0.3); flex-shrink: 0;
+          letter-spacing: 2px; color: rgba(187, 40, 200, 0.3); flex-shrink: 0;
         }
         .vfx-lb-title {
           font-family: 'Bebas Neue', sans-serif; font-size: 16px;
@@ -390,7 +395,7 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-lb-desc {
           flex: 1; font-family: 'Barlow Condensed', sans-serif; font-size: 12px;
-          font-weight: 300; color: rgba(200,210,120,0.3); letter-spacing: 0.4px;
+          font-weight: 300; color: rgba(207, 120, 210, 0.3); letter-spacing: 0.4px;
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .vfx-lb-btn {
@@ -401,10 +406,10 @@ export default function Vfx({ src: bgSrc }) {
           display: flex; align-items: center; justify-content: center; flex-shrink: 0;
           transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
         }
-        .vfx-lb-btn:hover { background: rgba(138,154,0,0.22); color: #9b4dff; border-color: rgba(123,47,212,0.6); }
-        .vfx-lb-btn:active { background: rgba(138,154,0,0.35); }
+        .vfx-lb-btn:hover { background: rgba(154, 0, 146, 0.22); color: #9b4dff; border-color: rgba(123,47,212,0.6); }
+        .vfx-lb-btn:active { background: rgba(110, 0, 154, 0.35); }
         .vfx-lb-btn--close { margin-left: 4px; }
-        .vfx-lb-btn--close:hover { background: rgba(138,154,0,0.38); }
+        .vfx-lb-btn--close:hover { background: rgba(118, 0, 154, 0.38); }
 
         /* ── Footer ── */
         .vfx-footer {
@@ -416,11 +421,11 @@ export default function Vfx({ src: bgSrc }) {
         .vfx-footer--mounted { opacity: 1; }
         .vfx-footer__row {
           display: flex; align-items: center; gap: 8px;
-          font-size: 12px; letter-spacing: 2px; color: rgba(180,200,60,0.22);
+          font-size: 12px; letter-spacing: 2px; color: rgba(184, 60, 200, 0.22);
         }
         .vfx-footer__row kbd {
           font-family: 'Bebas Neue', sans-serif;
-          border: 1px solid rgba(160,180,40,0.15); border-radius: 3px;
+          border: 1px solid rgba(180, 40, 168, 0.15); border-radius: 3px;
           padding: 1px 6px; font-size: 10px; background: none; color: inherit;
         }
 
