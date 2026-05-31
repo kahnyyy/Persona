@@ -13,9 +13,6 @@ const VFX_PIECES = [
   // ── Add more entries here ──
 ];
 
-// Olive/gold accent colour
-const A = "#8a9a00";       // main accent (olive gold)
-const A2 = "rgba(138,154,0,"; // for rgba variants
 
 export default function Vfx({ src: bgSrc }) {
   const navigate    = useNavigate();
