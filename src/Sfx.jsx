@@ -1,708 +1,584 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import char1 from "./assets/char1.png";
-import char2 from "./assets/char2.png";
-import char3 from "./assets/char3.png";
-import bgVideo from "./assets/main3.mp4";
-import newsign from "./assets/newsign.png";
-import icon1 from "./assets/icon1.png";
-import icon2 from "./assets/icon2.png";
-import icon3 from "./assets/icon3.png";
 
+import soon from "./assets/animation/soon.mp4";
+import d4c from "./assets/animation/d4credesignkahny.mp4";
 
-const CHARS = [char1, char2, char3];
-
-const ROLES = [
-  { text: "LEADER", color: "#e8c100", bg: "rgba(232,193,0,0.12)", border: "rgba(232,193,0,0.5)" },
-  { text: "PARTY",  color: "#4a8fff", bg: "rgba(74,143,255,0.12)", border: "rgba(74,143,255,0.5)" },
-  { text: "PARTY",  color: "#4a8fff", bg: "rgba(74,143,255,0.12)", border: "rgba(74,143,255,0.5)" },
+const VFX_PIECES = [
+  { src: soon, title: "D4C CUTSCENE",       tag: "ATTACK",    desc: "custom redesigned d4c sfx" },
+  { src: soon, title: "Explosion SFX", tag: "EXPLOSION", desc: "Soon" },
+  { src: soon, title: "Magic SFX",     tag: "MAGIC",     desc: "Soon" },
+  { src: soon, title: "Summon SFX",    tag: "CHARACTER", desc: "Soon" },
+  { src: soon, title: "Other",         tag: "ATTACK",    desc: "Soon" },
+  { src: soon, title: "Other",         tag: "ATTACK",    desc: "Soon" },
+  // ── Add more entries here ──
 ];
 
-const ITEMS = [
-  {
-    id: "twitch", label: "TWITCH", handle: "@yourname", href: "https://twitch.tv/yourname", icon: "🎮", barIcon: icon1, bars: 1, newBars: [0], counts: ["56"],
-    links: ["twitch.tv/videos/2041837265"],
-    stats: [
-      { tag: "FOL", value: "1.2K", color: "#9147ff" },
-      { tag: "VWR", value: "042",  color: "#bf94ff" },
-    ],
-  },
-  {
-    id: "instagram", label: "INSTAGRAM", handle: "@yourhandle", href: "https://instagram.com/yourhandle", icon: "📷", barIcon: icon2, bars: 5, newBars: [1, 2], counts: ["3.4M", "2.5M", "676K", "412K", "198K"],
-    links: ["instagram.com/p/C4xQmRrNk2a", "instagram.com/p/C3wLpBsOj7f", "instagram.com/reel/C2vKoArMi6e", "instagram.com/p/C1uJnZqLh5d", "instagram.com/reel/C0tImYpKg4c"],
-    stats: [
-      { tag: "FOL", value: "3.4K", color: "#e1306c" },
-      { tag: "PST", value: "128",  color: "#f77737" },
-    ],
-  },
-  {
-    id: "tiktok", label: "TIKTOK", handle: "@yourhandle", href: "https://tiktok.com/@yourhandle", icon: "🎵", barIcon: icon3, bars: 7, newBars: [0, 3, 5, 6], counts: ["5.1M", "3.7M", "2.2M", "1.4M", "831K", "490K", "217K"],
-    links: ["tiktok.com/@yourhandle/video/7318492016374859054", "tiktok.com/@yourhandle/video/7305837261940183342", "tiktok.com/@yourhandle/video/7291046385720348974", "tiktok.com/@yourhandle/video/7278392047163820334", "tiktok.com/@yourhandle/video/7264819203847165742", "tiktok.com/@yourhandle/video/7251047382916430126", "tiktok.com/@yourhandle/video/7237294018463851822"],
-    stats: [
-      { tag: "FOL", value: "8.9K", color: "#00f2ea" },
-      { tag: "LKS", value: "52K",  color: "#ff0050" },
-    ],
-  },
-];
+// Olive/gold accent colour
+const A = "#8a9a00";       // main accent (olive gold)
+const A2 = "rgba(138,154,0,"; // for rgba variants
 
-export default function Sfx() {
-  const [active, setActive]               = useState(0);
-  const [mounted, setMounted]             = useState(false);
-  const [activeInfoBar, setActiveInfoBar] = useState(0);
-  const [focus, setFocus]                 = useState("left"); // "left" | "right"
-  const navigate = useNavigate();
-
-  const isMobileViewport =
-    typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
+export default function Vfx({ src: bgSrc }) {
+  const navigate    = useNavigate();
+  const [active, setActive]       = useState(0);
+  const [mounted, setMounted]     = useState(false);
+  const [lightbox, setLightbox]   = useState(false);
+  const [lbVisible, setLbVisible] = useState(false);
+  const previewRef  = useRef(null);
+  const lightboxRef = useRef(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 60);
+    const t = setTimeout(() => setMounted(true), 80);
     return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
+    if (previewRef.current) {
+      previewRef.current.currentTime = 0;
+      previewRef.current.play().catch(() => {});
+    }
+  }, [active]);
+
+  const openLightbox = useCallback(() => {
+    setLightbox(true);
+    requestAnimationFrame(() => requestAnimationFrame(() => setLbVisible(true)));
+  }, []);
+
+  const closeLightbox = useCallback(() => {
+    setLbVisible(false);
+    setTimeout(() => setLightbox(false), 380);
+  }, []);
+
+  useEffect(() => {
     const onKey = (e) => {
-      if (focus === "left") {
-        if (e.key === "ArrowUp")    setActive(i => Math.max(0, i - 1));
-        if (e.key === "ArrowDown")  setActive(i => Math.min(ITEMS.length - 1, i + 1));
-        if (e.key === "ArrowRight") { setFocus("right"); setActiveInfoBar(0); }
-        if (e.key === "Enter")      window.open(ITEMS[active].href, "_blank");
-      } else {
-        const barCount = ITEMS[active].bars;
-        if (e.key === "ArrowUp")   setActiveInfoBar(i => Math.max(0, i - 1));
-        if (e.key === "ArrowDown") setActiveInfoBar(i => Math.min(barCount - 1, i + 1));
-        if (e.key === "ArrowLeft") setFocus("left");
-        if (e.key === "Enter")     window.open("https://" + ITEMS[active].links[activeInfoBar], "_blank");
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (lightbox) {
+        if (e.key === "Escape") closeLightbox();
+        return;
       }
-      if ((e.key === "ArrowLeft" && focus === "left") || e.key === "Escape" || e.key === "Backspace") navigate(-1);
+      if (e.key === "ArrowUp"   || e.key === "w" || e.key === "W") setActive(i => Math.max(0, i - 1));
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") setActive(i => Math.min(VFX_PIECES.length - 1, i + 1));
+      if (e.key === "Enter" || e.key === "f" || e.key === "F")     openLightbox();
+      if (e.key === "Escape" || e.key === "Backspace" || e.key === "ArrowLeft") navigate(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, navigate, focus]);
+  }, [lightbox, navigate, openLightbox, closeLightbox]);
+
+  const piece = VFX_PIECES[active];
 
   return (
     <div id="menu-screen">
-      <video src={bgVideo} autoPlay loop muted playsInline />
+      <video src={bgSrc} autoPlay loop muted playsInline style={{ pointerEvents: "none" }} />
+
+      {/* Entry reveal mask — olive flash */}
+      <div className="vfx-entry-mask" aria-hidden="true">
+        <video src={bgSrc} autoPlay loop muted playsInline className="vfx-entry-video" />
+      </div>
+
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,700;1,700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .sc-root {
-          position: absolute;
-          inset: 0;
-          z-index: 10;
+        /* ── Entry wipe ── */
+        .vfx-entry-mask {
+          position: absolute; inset: 0; z-index: 9;
+          overflow: hidden; background: #6b7800;
+          clip-path: circle(0 at 50% 50%);
+          animation: vfx-entry-reveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards;
           pointer-events: none;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
+        }
+        .vfx-entry-video {
+          position: absolute; inset: 0;
+          width: 100%; height: 100%; object-fit: cover;
+        }
+        @keyframes vfx-entry-reveal {
+          from { clip-path: circle(0 at 50% 50%); }
+          to   { clip-path: circle(150vmax at 50% 50%); }
+        }
+
+        /* ── Root overlay ── */
+        .vfx-overlay {
+          position: absolute; inset: 0; z-index: 10;
+          display: flex; align-items: stretch;
+          pointer-events: none;
+        }
+
+        /* ── Left panel ── */
+        .vfx-left {
+          position: relative;
+          width: clamp(280px, 36vw, 480px);
+          display: flex; flex-direction: column;
           justify-content: center;
           gap: 6px;
-          padding-left: 0;
-        }
-
-        /* ── Each bar ── */
-        .sc-bar {
-          position: relative;
-          width: 45vw;
-          height: 64px;
-          transition: height 0.3s cubic-bezier(0.22,1,0.36,1);
-          background: #111;
-          cursor: pointer;
           pointer-events: all;
-          clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
-          box-shadow: 0 6px 24px rgba(0,0,0,0.65);
-          z-index: 1;
-        }
-
-        /* wrapper holds both the red underlay and the bar */
-        .sc-bar-outer {
-          position: relative;
           flex-shrink: 0;
-          transform: translateX(-100%);
-          transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .sc-bar-outer.active .sc-bar     { height: 90px; }
-        .sc-bar-outer.active .sc-bar-red { height: 90px; }
-        .sc-bar-outer.mounted { transform: translateX(0); }
-        .sc-bar-outer:nth-child(1) { transition-delay: 0ms; }
-        .sc-bar-outer:nth-child(2) { transition-delay: 80ms; }
-        .sc-bar-outer:nth-child(3) { transition-delay: 160ms; }
 
-        /* red underlay — peeks out below the bar when active */
-        .sc-bar-red {
-          position: absolute;
-          top: 0; left: 0;
-          width: 45vw;
-          height: 64px;
-          background: #c4001a;
-          clip-path: polygon(50% 0, 100% 0, 100% 100%, calc(50% - 10px) 100%);
-          transform: translateY(-7px);
-          opacity: 0;
-          transition: opacity 0.2s ease;
-          z-index: 0;
-          pointer-events: none;
-        }
-        .sc-bar-outer.active .sc-bar-red { opacity: 1; }
-
-        /* white fill — skewed parallelogram on the right 25% */
-        .sc-bar-fill {
-          position: absolute;
-          inset: 0;
+        /* ── Bar hit wrapper ── */
+        .vfx-bar-hit {
+          position: relative;
           width: 100%;
-          background: #ffffff;
-          clip-path: polygon(100% 0, 100% 0, calc(100% - 32px) 100%, calc(100% - 32px) 100%);
-          transition: clip-path 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-          z-index: 0;
-        }
-        .sc-bar-outer.active .sc-bar-fill {
-          clip-path: polygon(22% 0, 100% 0, calc(100% - 14px) 100%, calc(22% + 138px) 100%);
-        }
-
-        /* shade on the left edge of the white fill */
-        .sc-bar-shade {
-          position: absolute;
-          top: 0; bottom: 0;
-          left: 73%;
-          width: 6%;
-          background: linear-gradient(90deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
-          z-index: 1;
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 0.35s ease;
-        }
-        .sc-bar-outer.active .sc-bar-shade { opacity: 1; }
-
-        /* bottom shadow line under each bar */
-        .sc-bar::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 0; right: 0;
-          height: 6px;
-          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 100%);
-          z-index: 10;
-          pointer-events: none;
-        }
-
-        /* content layout inside each bar */
-        .sc-bar-content {
-          position: relative;
-          z-index: 2;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 20px 0 20px;
-        }
-
-        /* left: role label */
-        .sc-role {
-          display: flex;
-          align-items: center;
-          flex-shrink: 0;
-          font-family: 'Anton', sans-serif;
-          font-size: 50px;
-          letter-spacing: -2px;
-          color: #ffffff;
-          transform: rotate(-30deg);
+          padding-bottom: 18px;
+          cursor: pointer; outline: none;
+          transform: translateX(-110%);
+          transition: transform 0.52s cubic-bezier(0.22,1,0.36,1),
+                      width 0.32s cubic-bezier(0.22,1,0.36,1);
           user-select: none;
-          line-height: 1;
-          padding: 0 16px 0 8px;
+          pointer-events: all;
+        }
+        .vfx-bar-hit--mounted  { transform: translateX(0); }
+        .vfx-bar-hit:nth-child(1) { transition-delay: 0ms; }
+        .vfx-bar-hit:nth-child(2) { transition-delay: 60ms; }
+        .vfx-bar-hit:nth-child(3) { transition-delay: 120ms; }
+        .vfx-bar-hit:nth-child(4) { transition-delay: 180ms; }
+        .vfx-bar-hit:nth-child(5) { transition-delay: 240ms; }
+        .vfx-bar-hit:nth-child(6) { transition-delay: 300ms; }
+        .vfx-bar-hit:nth-child(7) { transition-delay: 360ms; }
+        .vfx-bar-hit--active { width: 108%; }
+
+        .vfx-bar-visual {
+          position: relative; height: 54px;
+          background: rgba(20, 24, 4, 0.92);
+          clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+          pointer-events: none;
+          border-left: 3px solid rgba(138,154,0,0.0);
+          transition: height 0.28s cubic-bezier(0.22,1,0.36,1),
+                      border-color 0.2s ease,
+                      background 0.2s ease;
+        }
+        .vfx-bar-hit--active .vfx-bar-visual {
+          height: 74px;
+          border-left-color: #8a9a00;
+          background: rgba(32, 38, 4, 0.97);
         }
 
-        /* left: icon + name centered in remaining space */
-        .sc-main {
+        /* Olive accent underlay */
+        .vfx-bar-accent {
+          position: absolute; inset: 0;
+          background: #8a9a00;
+          clip-path: polygon(65% 0, 100% 0, 100% 100%, calc(65% - 12px) 100%);
+          transform: translateY(-5px); opacity: 0;
+          transition: opacity 0.2s ease; z-index: 0; pointer-events: none;
+        }
+        .vfx-bar-hit--active .vfx-bar-accent { opacity: 1; }
+
+        /* White fill sweep */
+        .vfx-bar-fill {
+          position: absolute; inset: 0; background: #e8e8d0;
+          clip-path: polygon(calc(100% - 4px) 0, 100% 0, calc(100% - 14px) 100%, calc(100% - 18px) 100%);
+          transition: clip-path 0.32s cubic-bezier(0.22,1,0.36,1);
+          z-index: 0; pointer-events: none;
+        }
+        .vfx-bar-hit--active .vfx-bar-fill {
+          clip-path: polygon(28% 0, 100% 0, calc(100% - 12px) 100%, calc(28% + 110px) 100%);
+        }
+
+        .vfx-bar-content {
+          position: relative; z-index: 2; height: 100%;
+          display: flex; align-items: center; gap: 10px;
+          padding: 0 14px; pointer-events: none;
+        }
+        .vfx-bar-index {
+          font-family: 'Bebas Neue', sans-serif; font-size: 26px;
+          color: rgba(180,200,40,0.3); line-height: 1; flex-shrink: 0;
+          letter-spacing: 1px; transition: color 0.2s ease;
+        }
+        .vfx-bar-hit--active .vfx-bar-index { color: rgba(0,0,0,0.3); }
+
+        .vfx-bar-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+        .vfx-bar-title {
+          font-family: 'Bebas Neue', sans-serif; font-size: 21px;
+          letter-spacing: 3px; color: rgba(200,220,80,0.85); line-height: 1;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+          transition: color 0.2s ease;
+        }
+        .vfx-bar-hit--active .vfx-bar-title { color: #1a1a00; }
+
+        .vfx-bar-tag {
+          font-family: 'Barlow Condensed', sans-serif; font-size: 9px;
+          font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+          color: rgba(180,200,40,0.4); transition: color 0.2s ease;
+        }
+        .vfx-bar-hit--active .vfx-bar-tag { color: rgba(0,0,0,0.4); }
+
+        .vfx-bar-hint {
+          font-family: 'Bebas Neue', sans-serif; font-size: 10px;
+          letter-spacing: 2px; color: #8a9a00;
+          flex-shrink: 0; padding-right: 4px; min-width: 56px; text-align: right;
+        }
+
+        .vfx-bar-desc {
+          display: block; position: absolute;
+          bottom: 2px; left: 14px; right: 14px;
+          font-family: 'Barlow Condensed', sans-serif; font-size: 11px;
+          font-weight: 300; letter-spacing: 0.5px; color: rgba(190,210,60,0.45);
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+          opacity: 0; transform: translateY(-2px);
+          transition: opacity 0.18s ease 0.06s, transform 0.18s ease 0.06s;
+          pointer-events: none;
+        }
+        .vfx-bar-hit--active .vfx-bar-desc { opacity: 1; transform: translateY(0); }
+
+        /* ── Right panel — video preview ── */
+        .vfx-right {
           flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 3px;
-        }
-        .sc-main-top {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .sc-icon {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 22px;
-          width: 32px;
-          text-align: center;
-          flex-shrink: 0;
-          color: rgba(255,255,255,0.15);
-          transition: color 0.2s ease;
-          user-select: none;
-        }
-        .sc-bar-outer.active .sc-icon { color: rgba(255,255,255,0.25); }
-
-        .sc-label {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 28px;
-          letter-spacing: 4px;
-          line-height: 1;
-          color: rgba(255,255,255,0.85);
-          transition: color 0.2s ease;
-          user-select: none;
-        }
-        .sc-bar-outer.active .sc-label { color: #111111; }
-
-        /* lb/rb nav row */
-        @keyframes sc-arrow-left {
-          0%, 100% { transform: translateX(0); opacity: 1; }
-          50%       { transform: translateX(-5px); opacity: 0.4; }
-        }
-        @keyframes sc-arrow-right {
-          0%, 100% { transform: translateX(0); opacity: 1; }
-          50%       { transform: translateX(5px); opacity: 0.4; }
-        }
-        .sc-nav-btn {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 12px;
-          letter-spacing: 2px;
-          color: #111;
-          border: 1px solid rgba(0,0,0,0.35);
-          padding: 1px 7px;
-          line-height: 1.5;
-          user-select: none;
-        }
-        .sc-nav-arrow {
-          font-size: 12px;
-          color: #c4001a;
-          display: inline-block;
-        }
-        .sc-nav-arrow.left  { animation: sc-arrow-left  0.8s ease-in-out infinite; }
-        .sc-nav-arrow.right { animation: sc-arrow-right 0.8s ease-in-out infinite; }
-
-        /* right: stats group */
-        .sc-stats {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding-right: 24px;
-          flex-shrink: 0;
-        }
-
-        .sc-stat {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .sc-stat-top {
-          display: flex;
-          align-items: baseline;
-          gap: 4px;
-        }
-
-        .sc-stat-tag {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 9px;
-          letter-spacing: 1.5px;
-          padding: 1px 4px;
-          border-width: 1px;
-          border-style: solid;
-          line-height: 1.4;
-          user-select: none;
-        }
-
-        .sc-stat-num {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 26px;
-          font-style: italic;
-          line-height: 1;
-          color: #ffffff;
-          letter-spacing: 1px;
-          user-select: none;
-          transition: color 0.2s ease;
-        }
-        .sc-bar-outer.active .sc-stat-num { color: #111111; }
-
-        .sc-stat-bars {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          gap: 1px;
-          margin-top: 2px;
-        }
-        .sc-stat-bar-color {
-          height: 3px;
-          width: 100%;
-        }
-        .sc-stat-bar-black {
-          height: 2px;
-          width: 100%;
-          background: #000;
-        }
-
-        /* character portrait */
-        .sc-char {
-          position: absolute;
-          top: 0;
-          left: 110px;
-          height: 100%;
-          width: auto;
-          max-width: 160px;
-          object-fit: cover;
-          object-position: top;
-          pointer-events: none;
-          z-index: 3;
-          clip-path: polygon(20px 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
-        }
-
-        /* right-side nav bar */
-        @keyframes sc-right-nav-pop {
-          0%   { opacity: 0; transform: scale(0.55) translateY(-10px); }
-          65%  { opacity: 1; transform: scale(1.1) translateY(2px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .sc-right-nav {
-          position: fixed;
-          top: 40px;
-          right: 40px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          pointer-events: none;
-          z-index: 50;
-          animation: sc-right-nav-pop 0.38s cubic-bezier(0.22,1,0.36,1) both;
-        }
-        .sc-right-nav .sc-nav-btn {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 100px;
-          letter-spacing: 3px;
-          line-height: 1;
-          user-select: none;
-          color: #fff;
-          -webkit-text-stroke: 2px #000;
-          paint-order: stroke fill;
-          background: none;
-          border: none;
-          padding: 0 6px;
-        }
-        .sc-right-nav .sc-nav-label {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 28px;
-          letter-spacing: 3px;
-          line-height: 1;
-          user-select: none;
-          color: #111;
-          padding: 0 8px;
-        }
-        .sc-right-nav .sc-nav-arrow {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 22px;
-          color: #c4001a;
-          display: inline-block;
-          user-select: none;
-        }
-        .sc-right-nav .sc-nav-arrow.left  { animation: sc-arrow-left  0.8s ease-in-out infinite; }
-        .sc-right-nav .sc-nav-arrow.right { animation: sc-arrow-right 0.8s ease-in-out infinite; }
-
-        /* info panel */
-        .sc-info-panel {
-          position: fixed;
-          top: 132px;
-          right: 0;
-          left: 65%;
-          bottom: 84px;
-          z-index: 50;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          padding: 8px 8px 8px 0;
-          overflow-y: auto;
-          overflow-x: hidden;
-          pointer-events: none;
-        }
-
-        @keyframes sc-infobar-in {
-          0%   { opacity: 0; transform: translateX(40px); }
-          60%  { opacity: 1; transform: translateX(-4px); }
-          100% { opacity: 1; transform: translateX(0); }
-        }
-        .sc-info-bar-wrap {
           position: relative;
-          right: auto;
-          left: auto;
-          width: 100%;
-          height: 46px;
-          background: transparent;
+          display: flex; align-items: center; justify-content: center;
           pointer-events: all;
-          cursor: pointer;
-          z-index: 1;
-          padding: 0;
-          animation: sc-infobar-in 0.35s cubic-bezier(0.22,1,0.36,1) both;
-        }
-        .sc-info-bar-wrap.selected {
-          background: #111;
-          padding: 1.5px;
-          border-radius: 8px;
-        }
-        .sc-info-bar {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          background: transparent;
-          display: flex;
-          align-items: center;
           overflow: hidden;
         }
-        .sc-info-bar-wrap.selected .sc-info-bar {
-          background: #fff;
-          border-radius: 7px;
-        }
-        .sc-info-bar-new {
-          position: absolute;
-          left: -40px;
-          bottom: 0;
-          height: 65%;
-          width: auto;
-          pointer-events: none;
-          z-index: 3;
-        }
-        .sc-info-bar-wrap.selected .sc-info-bar::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 4px;
-          background: #c4001a;
-          z-index: 1;
-        }
-        .sc-info-bar-text {
-          flex: 1;
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 22px;
-          letter-spacing: 2px;
-          color: #111;
-          padding: 0 14px;
-          user-select: none;
-        }
-        .sc-info-bar-box {
-          height: 70%;
-          background: #000;
-          display: flex;
-          align-items: center;
-          padding: 0 12px;
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 20px;
-          letter-spacing: 1px;
-          color: #fff;
-          flex-shrink: 0;
-          border-radius: 6px;
-          margin-right: 4px;
-          user-select: none;
+
+        @keyframes vfx-preview-in {
+          0%   { opacity: 0; transform: scale(0.96) translateX(16px); }
+          100% { opacity: 1; transform: scale(1) translateX(0); }
         }
 
-        .sc-info-bar-icon {
-          height: 55%;
-          width: auto;
-          flex-shrink: 0;
-          margin-left: 14px;
-          object-fit: contain;
-          pointer-events: none;
-          user-select: none;
+        .vfx-preview-shell {
+          position: relative;
+          width: min(88%, 680px);
+          aspect-ratio: 16/9;
+          cursor: pointer;
+          animation: vfx-preview-in 0.38s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .vfx-preview-shell::before {
+          content: "";
+          position: absolute; inset: -2px;
+          background: linear-gradient(135deg, #8a9a00 0%, rgba(138,154,0,0.3) 50%, transparent 100%);
+          z-index: 0; border-radius: 2px;
         }
 
-        .sc-info-bar-count {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 22px;
-          letter-spacing: 1px;
-          color: #111;
-          margin-right: 80px;
-          flex-shrink: 0;
-          user-select: none;
+        .vfx-preview-frame {
+          position: relative; width: 100%; height: 100%;
+          background: #0c0e02; overflow: hidden; z-index: 1;
         }
-
-        /* footer hints */
-        .sc-footer {
-          position: fixed;
-          bottom: 20px; right: 28px;
+        .vfx-preview-video {
+          width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .vfx-preview-placeholder {
+          width: 100%; height: 100%;
           display: flex; flex-direction: column;
-          align-items: flex-end; gap: 5px;
-          font-family: 'Bebas Neue', sans-serif;
-          z-index: 50;
-          opacity: 0;
-          transition: opacity 0.4s ease 0.6s;
+          align-items: center; justify-content: center; gap: 10px;
+          background: rgba(30,36,4,0.6);
         }
-        .sc-footer.mounted { opacity: 1; }
-        .sc-footer-row {
+        .vfx-preview-placeholder-label {
+          font-family: 'Bebas Neue', sans-serif; font-size: 12px;
+          letter-spacing: 3px; color: rgba(180,200,40,0.25);
+        }
+        .vfx-preview-placeholder-title {
+          font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+          letter-spacing: 5px; color: rgba(180,200,40,0.35);
+        }
+
+        /* Hover overlay */
+        .vfx-preview-overlay {
+          position: absolute; inset: 0; z-index: 3;
+          background: rgba(0,0,0,0);
+          display: flex; align-items: center; justify-content: center;
+          transition: background 0.2s ease;
+        }
+        .vfx-preview-shell:hover .vfx-preview-overlay { background: rgba(0,0,0,0.45); }
+
+        .vfx-play-btn {
+          width: 56px; height: 56px; border-radius: 50%;
+          background: rgba(138,154,0,0.88);
+          border: 2px solid rgba(255,255,255,0.3);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 22px; color: #fff;
+          opacity: 0; transform: scale(0.8);
+          transition: opacity 0.18s ease, transform 0.18s ease;
+          pointer-events: none;
+        }
+        .vfx-preview-shell:hover .vfx-play-btn { opacity: 1; transform: scale(1); }
+
+        .vfx-preview-info {
+          position: absolute; bottom: -48px; left: 0; right: 0;
+          display: flex; align-items: center; gap: 12px; padding: 0 2px;
+        }
+        .vfx-preview-info-title {
+          font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+          letter-spacing: 3px; color: rgba(220,230,140,0.8);
+        }
+        .vfx-preview-info-tag {
+          font-family: 'Barlow Condensed', sans-serif; font-size: 9px;
+          font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+          color: #a8bc00; border: 1px solid rgba(138,154,0,0.45);
+          padding: 2px 6px; border-radius: 2px;
+        }
+        .vfx-preview-info-desc {
+          flex: 1;
+          font-family: 'Barlow Condensed', sans-serif; font-size: 12px;
+          font-weight: 300; color: rgba(200,210,120,0.3);
+          letter-spacing: 0.4px;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        /* ── Lightbox ── */
+        .vfx-lightbox {
+          position: fixed; inset: 0; z-index: 100;
+          background: rgba(0,0,0,0);
+          display: flex; align-items: center; justify-content: center;
+          transition: background 0.36s cubic-bezier(0.4,0,0.2,1);
+          cursor: default;
+        }
+        .vfx-lightbox--open { background: rgba(0,0,0,0.94); }
+
+        .vfx-lightbox__inner {
+          position: relative;
+          width: min(94vw, 1200px);
+          display: flex; flex-direction: column; gap: 0;
+          opacity: 0; transform: translateY(24px) scale(0.97);
+          transition: opacity 0.34s cubic-bezier(0.22,1,0.36,1),
+                      transform 0.34s cubic-bezier(0.22,1,0.36,1);
+        }
+        .vfx-lightbox--open .vfx-lightbox__inner {
+          opacity: 1; transform: translateY(0) scale(1);
+        }
+        .vfx-lightbox:not(.vfx-lightbox--open) .vfx-lightbox__inner {
+          opacity: 0; transform: translateY(12px) scale(0.98);
+          transition: opacity 0.26s cubic-bezier(0.4,0,1,1),
+                      transform 0.26s cubic-bezier(0.4,0,1,1);
+        }
+
+        .vfx-lightbox__frame {
+          position: relative; width: 100%; aspect-ratio: 16/9;
+          background: #050600;
+          border: 1px solid rgba(138,154,0,0.22);
+          border-bottom: none; overflow: hidden;
+        }
+        .vfx-lightbox__video {
+          width: 100%; height: 100%; display: block; object-fit: contain;
+        }
+        .vfx-lightbox__placeholder {
+          width: 100%; height: 100%;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center; gap: 10px;
+        }
+        .vfx-lightbox__placeholder-label {
+          font-family: 'Bebas Neue', sans-serif; font-size: 13px;
+          letter-spacing: 3px; color: rgba(180,200,40,0.2);
+        }
+        .vfx-lightbox__placeholder-title {
+          font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+          letter-spacing: 6px; color: rgba(180,200,40,0.28);
+        }
+
+        /* Lightbox toolbar */
+        @keyframes vfx-toolbar-in {
+          from { opacity: 0; transform: translateY(5px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .vfx-lb-toolbar {
+          display: flex; align-items: center;
+          background: rgba(4,5,0,0.97);
+          border: 1px solid rgba(138,154,0,0.18);
+          padding: 0 14px; height: 42px; gap: 14px;
+          animation: vfx-toolbar-in 0.3s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+        }
+        .vfx-lb-info {
+          display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;
+        }
+        .vfx-lb-counter {
+          font-family: 'Bebas Neue', sans-serif; font-size: 12px;
+          letter-spacing: 2px; color: rgba(180,200,40,0.3); flex-shrink: 0;
+        }
+        .vfx-lb-title {
+          font-family: 'Bebas Neue', sans-serif; font-size: 16px;
+          letter-spacing: 3px; color: rgba(230,240,180,0.8);
+        }
+        .vfx-lb-tag {
+          font-family: 'Barlow Condensed', sans-serif; font-size: 9px;
+          font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+          color: #a8bc00; border: 1px solid rgba(138,154,0,0.35);
+          padding: 1px 5px; border-radius: 2px; flex-shrink: 0;
+        }
+        .vfx-lb-desc {
+          flex: 1; font-family: 'Barlow Condensed', sans-serif; font-size: 12px;
+          font-weight: 300; color: rgba(200,210,120,0.3); letter-spacing: 0.4px;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .vfx-lb-btn {
+          height: 26px; min-width: 26px; padding: 0 8px;
+          background: rgba(138,154,0,0.06); border: 1px solid rgba(138,154,0,0.22);
+          color: rgba(190,210,60,0.65); cursor: pointer; border-radius: 3px;
+          font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 2px;
+          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+          transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+        }
+        .vfx-lb-btn:hover { background: rgba(138,154,0,0.22); color: #e8f080; border-color: rgba(138,154,0,0.6); }
+        .vfx-lb-btn:active { background: rgba(138,154,0,0.35); }
+        .vfx-lb-btn--close { margin-left: 4px; }
+        .vfx-lb-btn--close:hover { background: rgba(138,154,0,0.38); }
+
+        /* ── Footer ── */
+        .vfx-footer {
+          position: fixed; bottom: 20px; right: 28px;
+          display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+          font-family: 'Bebas Neue', sans-serif; z-index: 10;
+          opacity: 0; transition: opacity 0.4s ease 1s; pointer-events: none;
+        }
+        .vfx-footer--mounted { opacity: 1; }
+        .vfx-footer__row {
           display: flex; align-items: center; gap: 8px;
-          font-size: 13px; letter-spacing: 2px;
-          color: rgba(255,255,255,0.22);
+          font-size: 12px; letter-spacing: 2px; color: rgba(180,200,60,0.22);
         }
-        .sc-footer-key {
-          border: 1px solid rgba(255,255,255,0.15);
-          border-radius: 3px;
-          padding: 1px 6px; font-size: 11px;
-        }
-
-        .sc-mobile-controls {
-          display: none;
-        }
-
-        .sc-mobile-btn {
-          border: 1px solid rgba(255, 255, 255, 0.28);
-          background: rgba(0, 0, 0, 0.62);
-          color: #fff;
+        .vfx-footer__row kbd {
           font-family: 'Bebas Neue', sans-serif;
-          letter-spacing: 1.2px;
-          font-size: 13px;
-          padding: 7px 12px;
-          border-radius: 8px;
-          min-width: 84px;
+          border: 1px solid rgba(160,180,40,0.15); border-radius: 3px;
+          padding: 1px 6px; font-size: 10px; background: none; color: inherit;
         }
 
+        /* ── Back button ── */
+        .vfx-back-btn {
+          position: fixed; bottom: 20px; left: 20px; z-index: 50;
+          font-family: 'Bebas Neue', sans-serif; font-size: 12px;
+          letter-spacing: 2.5px; color: rgba(138,154,0,0.75);
+          background: rgba(138,154,0,0.06);
+          border: 1px solid rgba(138,154,0,0.28);
+          border-radius: 3px; padding: 5px 12px;
+          cursor: pointer; pointer-events: all;
+          opacity: 0; transform: translateY(4px);
+          transition: opacity 0.4s ease 1s, transform 0.4s ease 1s,
+                      background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+        .vfx-back-btn--mounted { opacity: 1; transform: translateY(0); }
+        .vfx-back-btn:hover { background: rgba(138,154,0,0.18); color: #d4e840; border-color: rgba(138,154,0,0.6); }
+
+        /* ── Mobile ── */
         @media (max-width: 768px) {
-          .sc-root {
-            justify-content: flex-start;
-            padding-top: 12px;
-            gap: 3px;
-          }
-
-          .sc-info-panel {
-            top: min(47vh, 320px);
-            left: 8px;
-            right: 8px;
-            bottom: 58px;
-            gap: 4px;
-            padding: 4px 0;
-          }
-
-          .sc-info-bar-wrap {
-            height: 38px !important;
-          }
-
-          .sc-info-bar-text {
-            font-size: 15px;
-            letter-spacing: 1px;
-          }
-
-          .sc-info-bar-count {
-            margin-right: 10px;
-            font-size: 14px;
-          }
-
-          .sc-footer {
-            display: none;
-          }
-
-          .sc-mobile-controls {
-            position: fixed;
-            left: 8px;
-            right: 8px;
-            bottom: max(8px, env(safe-area-inset-bottom));
-            z-index: 60;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            pointer-events: all;
-          }
+          .vfx-left  { width: 100%; justify-content: flex-end; padding-bottom: 56px; }
+          .vfx-right { display: none; }
+          .vfx-overlay { flex-direction: column; }
+          .vfx-footer { display: none; }
+          .vfx-lightbox__inner { width: 98vw; }
+          .vfx-lb-desc { display: none; }
         }
       `}</style>
 
-      <div className="sc-root" role="navigation">
-        {ITEMS.map((item, i) => (
-          <div
-            key={item.id}
-            className={`sc-bar-outer${active === i ? " active" : ""}${mounted ? " mounted" : ""}`}
-            onClick={() => {
-              if (active === i) window.open(item.href, "_blank");
-              else setActive(i);
-            }}
-            onMouseEnter={() => setActive(i)}
-          >
-            <div className="sc-bar-red" />
-            <div className="sc-bar">
-              <img className="sc-char" src={CHARS[i]} alt="" />
-              <div className="sc-bar-fill" />
-              <div className="sc-bar-shade" />
-              <div className="sc-bar-content">
-                <div className="sc-role">{ROLES[i].text}</div>
-                <div className="sc-main">
-                  <div className="sc-main-top">
-                    <div className="sc-icon">{item.icon}</div>
-                    <div className="sc-label">{item.label}</div>
-                  </div>
-                </div>
-                <div className="sc-stats">
-                  {item.stats.map(s => (
-                    <div className="sc-stat" key={s.tag}>
-                      <div className="sc-stat-top">
-                        <span className="sc-stat-tag" style={{ color: s.color, borderColor: s.color }}>{s.tag}</span>
-                        <span className="sc-stat-num">{s.value}</span>
-                      </div>
-                      <div className="sc-stat-bars">
-                        <div className="sc-stat-bar-color" style={{ background: s.color }} />
-                        <div className="sc-stat-bar-black" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {mounted && (
-        <div className="sc-right-nav" key={active}>
-          <span className="sc-nav-arrow left">◄</span>
-          <span className="sc-nav-btn">LB</span>
-          <span className="sc-nav-label">{ITEMS[active].label}</span>
-          <span className="sc-nav-btn">RB</span>
-          <span className="sc-nav-arrow right">►</span>
-        </div>
-      )}
-
-      {mounted && (
-        <div className="sc-info-panel" key={`panel-${active}`}>
-          {Array.from({ length: ITEMS[active].bars }).map((_, i) => (
+      <div className="vfx-overlay">
+        {/* ── Left: bar stack ── */}
+        <div className="vfx-left">
+          {VFX_PIECES.map((item, i) => (
             <div
-              className={`sc-info-bar-wrap${activeInfoBar === i ? " selected" : ""}`}
-              key={`bar-${active}-${i}`}
-              style={{ animationDelay: `${i * 50}ms` }}
-              onClick={() => {
-                if (isMobileViewport || activeInfoBar === i) {
-                  window.open("https://" + ITEMS[active].links[i], "_blank");
-                  return;
-                }
-                setActiveInfoBar(i);
-              }}
-              onMouseEnter={() => setActiveInfoBar(i)}
+              key={i}
+              className={[
+                "vfx-bar-hit",
+                active === i  ? "vfx-bar-hit--active"  : "",
+                mounted       ? "vfx-bar-hit--mounted"  : "",
+              ].join(" ")}
+              style={{ transitionDelay: `${i * 60}ms`, pointerEvents: "all" }}
+              onClick={() => setActive(i)}
+              onMouseEnter={() => setActive(i)}
+              role="button" tabIndex={0}
+              aria-label={`${item.title} — ${item.tag}`}
+              onKeyDown={(e) => { if (e.key === "Enter") { setActive(i); openLightbox(); } }}
             >
-              {ITEMS[active].newBars.includes(i) && (
-                <img className="sc-info-bar-new" src={newsign} alt="" />
-              )}
-              <div className="sc-info-bar">
-                <img className="sc-info-bar-icon" src={ITEMS[active].barIcon} alt="" />
-                <span className="sc-info-bar-text">{ITEMS[active].links[i].slice(0, 10)}...</span>
-                <span className="sc-info-bar-box">VIEWS</span>
-                <span className="sc-info-bar-count">{ITEMS[active].counts[i]}</span>
+              <div className="vfx-bar-visual">
+                <span className="vfx-bar-accent" aria-hidden="true" />
+                <span className="vfx-bar-fill"   aria-hidden="true" />
+                <span className="vfx-bar-content">
+                  <span className="vfx-bar-index">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="vfx-bar-text">
+                    <span className="vfx-bar-title">{item.title}</span>
+                    <span className="vfx-bar-tag">{item.tag}</span>
+                  </span>
+                  <span className="vfx-bar-hint" aria-hidden="true">
+                    {active === i ? "CLICK / ↵" : ""}
+                  </span>
+                </span>
               </div>
+              <span className="vfx-bar-desc">{item.desc}</span>
             </div>
           ))}
         </div>
+
+        {/* ── Right: live preview ── */}
+        <div className="vfx-right">
+          <div
+            className="vfx-preview-shell"
+            key={active}
+            onClick={openLightbox}
+            title="Click to fullscreen"
+          >
+            <div className="vfx-preview-frame">
+              {piece.src ? (
+                <video
+                  ref={previewRef}
+                  src={piece.src}
+                  autoPlay loop muted playsInline
+                  className="vfx-preview-video"
+                />
+              ) : (
+                <div className="vfx-preview-placeholder">
+                  <span className="vfx-preview-placeholder-label">VIDEO PREVIEW</span>
+                  <span className="vfx-preview-placeholder-title">{piece.title}</span>
+                </div>
+              )}
+            </div>
+            <div className="vfx-preview-overlay">
+              <div className="vfx-play-btn">⛶</div>
+            </div>
+            <div className="vfx-preview-info">
+              <span className="vfx-preview-info-title">{piece.title}</span>
+              <span className="vfx-preview-info-tag">{piece.tag}</span>
+              <span className="vfx-preview-info-desc">{piece.desc}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Lightbox ── */}
+      {lightbox && (
+        <div
+          className={`vfx-lightbox${lbVisible ? " vfx-lightbox--open" : ""}`}
+          onClick={(e) => { if (e.currentTarget === e.target) closeLightbox(); }}
+          role="dialog" aria-modal="true"
+        >
+          <div className="vfx-lightbox__inner" ref={lightboxRef}>
+            <div className="vfx-lightbox__frame">
+              {piece.src ? (
+                <video
+                  src={piece.src}
+                  autoPlay loop playsInline controls
+                  className="vfx-lightbox__video"
+                />
+              ) : (
+                <div className="vfx-lightbox__placeholder">
+                  <span className="vfx-lightbox__placeholder-label">NO VIDEO ATTACHED</span>
+                  <span className="vfx-lightbox__placeholder-title">{piece.title}</span>
+                </div>
+              )}
+            </div>
+            <div className="vfx-lb-toolbar">
+              <div className="vfx-lb-info">
+                <span className="vfx-lb-counter">{String(active + 1).padStart(2, "0")} / {String(VFX_PIECES.length).padStart(2, "0")}</span>
+                <span className="vfx-lb-title">{piece.title}</span>
+                <span className="vfx-lb-tag">{piece.tag}</span>
+                <span className="vfx-lb-desc">{piece.desc}</span>
+              </div>
+              <button className="vfx-lb-btn" onClick={() => setActive(i => Math.max(0, i - 1))} aria-label="Previous">◄</button>
+              <button className="vfx-lb-btn" onClick={() => setActive(i => Math.min(VFX_PIECES.length - 1, i + 1))} aria-label="Next">►</button>
+              <button className="vfx-lb-btn vfx-lb-btn--close" onClick={closeLightbox} aria-label="Close">✕</button>
+            </div>
+          </div>
+        </div>
       )}
 
-      <div className={`sc-footer${mounted ? " mounted" : ""}`}>
-        <div className="sc-footer-row"><span className="sc-footer-key">↑↓</span><span>SELECT</span></div>
-        <div className="sc-footer-row"><span className="sc-footer-key">↵</span><span>OPEN</span></div>
-        <div className="sc-footer-row"><span className="sc-footer-key">ESC</span><span>BACK</span></div>
-      </div>
+      {/* ── Footer hints ── */}
+      <footer className={`vfx-footer${mounted ? " vfx-footer--mounted" : ""}`}>
+        <div className="vfx-footer__row"><kbd>↑↓ / WS</kbd><span>SELECT</span></div>
+        <div className="vfx-footer__row"><kbd>↵ / F</kbd><span>FULLSCREEN</span></div>
+        <div className="vfx-footer__row"><kbd>ESC</kbd><span>BACK</span></div>
+      </footer>
 
-      <div className="sc-mobile-controls" aria-label="Socials mobile controls">
-        <button className="sc-mobile-btn" type="button" onClick={() => navigate(-1)}>
-          BACK
-        </button>
-        <button
-          className="sc-mobile-btn"
-          type="button"
-          onClick={() => window.open(ITEMS[active].href, "_blank")}
-        >
-          OPEN
-        </button>
-      </div>
+      {/* ── Back button ── */}
+      <button
+        className={`vfx-back-btn${mounted ? " vfx-back-btn--mounted" : ""}`}
+        onClick={() => navigate(-1)}
+        aria-label="Go back"
+      >
+        ◄ BACK
+      </button>
     </div>
   );
 }

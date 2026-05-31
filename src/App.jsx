@@ -4,6 +4,7 @@ import menuVideo from './assets/Mainn.mp4'
 import main1 from './assets/main1.mp4'
 import main2 from './assets/main2.mp4'
 import main3 from './assets/main3.mp4'
+import sfxvideo from './assets/SFX VIDEO'
 import P3Menu from './P3Menu'
 import VideoPage from './VideoPage'
 import PageTransition from './PageTransition'
@@ -38,9 +39,14 @@ function AnimatedRoutes() {
         <Route path="/animation" element={
           <PageTransition><Animation src={main2} /></PageTransition>
         } />
-        <Route path="/sfx" element={
-          <PageTransition variant="socials"><Sfx /></PageTransition>
-        } />
+        <Route
+          path="/sfx"
+          element={
+            <PageTransition>
+              <Vfx src={sfxvideo} />
+            </PageTransition>
+          }
+        />
         <Route
           path="/vfx"
           element={
