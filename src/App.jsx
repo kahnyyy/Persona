@@ -4,6 +4,7 @@ import menuVideo from './assets/Mainn.mp4'
 import main1 from './assets/main1.mp4'
 import main2 from './assets/main2.mp4'
 import main3 from './assets/main3.mp4'
+import aizen from './assets/aizen.mp4'
 import sfxvideo from './assets/SFX VIDEO.mp4'
 import P3Menu from './P3Menu'
 import VideoPage from './VideoPage'
@@ -56,7 +57,7 @@ function AnimatedRoutes() {
           }
         />
         <Route path="/other" element={
-          <PageTransition><VideoPage src={main3} /></PageTransition>
+          <PageTransition><VideoPage src={aizen} /></PageTransition>
         } />
       </Routes>
     </AnimatePresence>
