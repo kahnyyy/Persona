@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { Analytics } from "@vercel/analytics/next"
 import { AnimatePresence } from 'framer-motion'
 import menuVideo from './assets/Mainn.mp4'
 import main1 from './assets/main1.mp4'
