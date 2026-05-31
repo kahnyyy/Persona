@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { AnimatePresence } from 'framer-motion'
 import menuVideo from './assets/Mainn.mp4'
 import main1 from './assets/main1.mp4'
@@ -70,6 +71,7 @@ export default function App() {
     <>
       <Analytics />
       <AnimatedRoutes />
+      <SpeedInsights />
     </>
   )
 }
