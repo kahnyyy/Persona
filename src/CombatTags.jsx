@@ -79,7 +79,7 @@ export default function Vfx({ src: bgSrc }) {
         /* ── Entry wipe ── */
         .vfx-entry-mask {
           position: absolute; inset: 0; z-index: 9;
-          overflow: hidden; background: #6b7800;
+          overflow: hidden; background: #6b00a8;
           clip-path: circle(0 at 50% 50%);
           animation: vfx-entry-reveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards;
           pointer-events: none;
@@ -145,14 +145,14 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-bar-hit--active .vfx-bar-visual {
           height: 74px;
-          border-left-color: #8a9a00;
+          border-left-color: #7b2fd4;
           background: rgba(32, 38, 4, 0.97);
         }
 
         /* Olive accent underlay */
         .vfx-bar-accent {
           position: absolute; inset: 0;
-          background: #8a9a00;
+          background: #7b2fd4;
           clip-path: polygon(65% 0, 100% 0, 100% 100%, calc(65% - 12px) 100%);
           transform: translateY(-5px); opacity: 0;
           transition: opacity 0.2s ease; z-index: 0; pointer-events: none;
@@ -185,7 +185,7 @@ export default function Vfx({ src: bgSrc }) {
         .vfx-bar-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
         .vfx-bar-title {
           font-family: 'Bebas Neue', sans-serif; font-size: 21px;
-          letter-spacing: 3px; color: rgba(200,220,80,0.85); line-height: 1;
+          letter-spacing: 3px; color: rgba(180,120,255,0.85); line-height: 1;
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
           transition: color 0.2s ease;
         }
@@ -200,7 +200,7 @@ export default function Vfx({ src: bgSrc }) {
 
         .vfx-bar-hint {
           font-family: 'Bebas Neue', sans-serif; font-size: 10px;
-          letter-spacing: 2px; color: #8a9a00;
+          letter-spacing: 2px; color: #7b2fd4;
           flex-shrink: 0; padding-right: 4px; min-width: 56px; text-align: right;
         }
 
@@ -208,7 +208,7 @@ export default function Vfx({ src: bgSrc }) {
           display: block; position: absolute;
           bottom: 2px; left: 14px; right: 14px;
           font-family: 'Barlow Condensed', sans-serif; font-size: 11px;
-          font-weight: 300; letter-spacing: 0.5px; color: rgba(190,210,60,0.45);
+          font-weight: 300; letter-spacing: 0.5px; color: rgba(170,110,255,0.45);
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
           opacity: 0; transform: translateY(-2px);
           transition: opacity 0.18s ease 0.06s, transform 0.18s ease 0.06s;
@@ -240,7 +240,7 @@ export default function Vfx({ src: bgSrc }) {
         .vfx-preview-shell::before {
           content: "";
           position: absolute; inset: -2px;
-          background: linear-gradient(135deg, #8a9a00 0%, rgba(138,154,0,0.3) 50%, transparent 100%);
+          background: linear-gradient(135deg, #7b2fd4 0%, rgba(123,47,212,0.3) 50%, transparent 100%);
           z-index: 0; border-radius: 2px;
         }
 
@@ -259,11 +259,11 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-preview-placeholder-label {
           font-family: 'Bebas Neue', sans-serif; font-size: 12px;
-          letter-spacing: 3px; color: rgba(180,200,40,0.25);
+          letter-spacing: 3px; color: rgba(160,100,255,0.25);
         }
         .vfx-preview-placeholder-title {
           font-family: 'Bebas Neue', sans-serif; font-size: 28px;
-          letter-spacing: 5px; color: rgba(180,200,40,0.35);
+          letter-spacing: 5px; color: rgba(160,100,255,0.35);
         }
 
         /* Hover overlay */
@@ -277,7 +277,7 @@ export default function Vfx({ src: bgSrc }) {
 
         .vfx-play-btn {
           width: 56px; height: 56px; border-radius: 50%;
-          background: rgba(138,154,0,0.88);
+          background: rgba(123,47,212,0.88);
           border: 2px solid rgba(255,255,255,0.3);
           display: flex; align-items: center; justify-content: center;
           font-size: 22px; color: #fff;
@@ -293,18 +293,18 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-preview-info-title {
           font-family: 'Bebas Neue', sans-serif; font-size: 18px;
-          letter-spacing: 3px; color: rgba(220,230,140,0.8);
+          letter-spacing: 3px; color: rgba(200,150,255,0.8);
         }
         .vfx-preview-info-tag {
           font-family: 'Barlow Condensed', sans-serif; font-size: 9px;
           font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-          color: #a8bc00; border: 1px solid rgba(138,154,0,0.45);
+          color: #7b2fd4; border: 1px solid rgba(123,47,212,0.45);
           padding: 2px 6px; border-radius: 2px;
         }
         .vfx-preview-info-desc {
           flex: 1;
           font-family: 'Barlow Condensed', sans-serif; font-size: 12px;
-          font-weight: 300; color: rgba(200,210,120,0.3);
+          font-weight: 300; color: rgba(170, 120, 210, 0.3);
           letter-spacing: 0.4px;
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
@@ -339,7 +339,7 @@ export default function Vfx({ src: bgSrc }) {
         .vfx-lightbox__frame {
           position: relative; width: 100%; aspect-ratio: 16/9;
           background: #050600;
-          border: 1px solid rgba(138,154,0,0.22);
+          border: 1px solid rgba(123,47,212,0.22);
           border-bottom: none; overflow: hidden;
         }
         .vfx-lightbox__video {
@@ -352,11 +352,11 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-lightbox__placeholder-label {
           font-family: 'Bebas Neue', sans-serif; font-size: 13px;
-          letter-spacing: 3px; color: rgba(180,200,40,0.2);
+          letter-spacing: 3px; color: rgba(160,100,255,0.2);
         }
         .vfx-lightbox__placeholder-title {
           font-family: 'Bebas Neue', sans-serif; font-size: 32px;
-          letter-spacing: 6px; color: rgba(180,200,40,0.28);
+          letter-spacing: 6px; color: rgba(160,100,255,0.28);
         }
 
         /* Lightbox toolbar */
@@ -367,7 +367,7 @@ export default function Vfx({ src: bgSrc }) {
         .vfx-lb-toolbar {
           display: flex; align-items: center;
           background: rgba(4,5,0,0.97);
-          border: 1px solid rgba(138,154,0,0.18);
+          border: 1px solid rgba(123,47,212,0.18);
           padding: 0 14px; height: 42px; gap: 14px;
           animation: vfx-toolbar-in 0.3s cubic-bezier(0.22,1,0.36,1) 0.1s both;
         }
@@ -380,12 +380,12 @@ export default function Vfx({ src: bgSrc }) {
         }
         .vfx-lb-title {
           font-family: 'Bebas Neue', sans-serif; font-size: 16px;
-          letter-spacing: 3px; color: rgba(230,240,180,0.8);
+          letter-spacing: 3px; color: rgba(160,100,255,0.8);
         }
         .vfx-lb-tag {
           font-family: 'Barlow Condensed', sans-serif; font-size: 9px;
           font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-          color: #a8bc00; border: 1px solid rgba(138,154,0,0.35);
+          color: #7b2fd4; border: 1px solid rgba(123,47,212,0.35);
           padding: 1px 5px; border-radius: 2px; flex-shrink: 0;
         }
         .vfx-lb-desc {
@@ -396,12 +396,12 @@ export default function Vfx({ src: bgSrc }) {
         .vfx-lb-btn {
           height: 26px; min-width: 26px; padding: 0 8px;
           background: rgba(138,154,0,0.06); border: 1px solid rgba(138,154,0,0.22);
-          color: rgba(190,210,60,0.65); cursor: pointer; border-radius: 3px;
+          color: rgba(170,110,255,0.65); cursor: pointer; border-radius: 3px;
           font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 2px;
           display: flex; align-items: center; justify-content: center; flex-shrink: 0;
           transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
         }
-        .vfx-lb-btn:hover { background: rgba(138,154,0,0.22); color: #e8f080; border-color: rgba(138,154,0,0.6); }
+        .vfx-lb-btn:hover { background: rgba(138,154,0,0.22); color: #9b4dff; border-color: rgba(123,47,212,0.6); }
         .vfx-lb-btn:active { background: rgba(138,154,0,0.35); }
         .vfx-lb-btn--close { margin-left: 4px; }
         .vfx-lb-btn--close:hover { background: rgba(138,154,0,0.38); }
@@ -428,9 +428,9 @@ export default function Vfx({ src: bgSrc }) {
         .vfx-back-btn {
           position: fixed; bottom: 20px; left: 20px; z-index: 50;
           font-family: 'Bebas Neue', sans-serif; font-size: 12px;
-          letter-spacing: 2.5px; color: rgba(138,154,0,0.75);
-          background: rgba(138,154,0,0.06);
-          border: 1px solid rgba(138,154,0,0.28);
+          letter-spacing: 2.5px; color: rgba(141, 0, 154, 0.75);
+          background: rgba(149, 0, 154, 0.06);
+          border: 1px solid rgba(136, 0, 154, 0.28);
           border-radius: 3px; padding: 5px 12px;
           cursor: pointer; pointer-events: all;
           opacity: 0; transform: translateY(4px);
@@ -438,7 +438,7 @@ export default function Vfx({ src: bgSrc }) {
                       background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
         .vfx-back-btn--mounted { opacity: 1; transform: translateY(0); }
-        .vfx-back-btn:hover { background: rgba(138,154,0,0.18); color: #d4e840; border-color: rgba(138,154,0,0.6); }
+        .vfx-back-btn:hover { background: rgba(141, 0, 154, 0.18); color: #8e40e8; border-color: rgba(110, 0, 154, 0.6); }
 
         /* ── Mobile ── */
         @media (max-width: 768px) {

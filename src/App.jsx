@@ -14,7 +14,7 @@ import Animation from './Animation'
 import Sfx from './Sfx'
 import Vfx from './Vfx'
 import './App.css'
-
+import CombatTags from './CombatTags'
 
 function MenuScreen() {
   const navigate = useNavigate()
@@ -56,8 +56,8 @@ function AnimatedRoutes() {
             </PageTransition>
           }
         />
-        <Route path="/other" element={
-          <PageTransition><VideoPage src={aizen} /></PageTransition>
+        <Route path="/CombatTags" element={
+          <PageTransition><CombatTags src={aizen} /></PageTransition>
         } />
       </Routes>
     </AnimatePresence>
